@@ -1,7 +1,7 @@
-qubic
+SangJa
 =====
 
 block based content creating tool
 
 
-voxel editor: opencpl.org/voxel
+see more at sangja.org
