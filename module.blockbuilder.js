@@ -10,18 +10,24 @@
 
 
 // 상수
+var ANITALIAS = true;
 var EDIT_MODE = { VIEW: 0, CONSTRUCT: 1, DESTRUCT: 2 };
-var CANVAS_BACKGROUND_COLOR = 0xf0f0f0;
+
 var BLOCK_SIZE = 10;
+var BLOCK_OUTLINE_SIZE = 10.1;
+
+var CANVAS_BACKGROUND_COLOR = 0xf0f0f0;
+var BLOCK_SELECTION_OUTLINE_COLOR = 0x555555;
+var BLOCK_DESTRUCTION_OUTLINE_COLOR = 0xFF0000;
 var INITIAL_BLOCK_COLOR = 0xffffff;
 
 // 사용자 UI 관련
 var toolbar, canvas, color_picker, controls;
-var guideGrid, guideBlock;
+var guideGrid, guideBlock, guideBlockEdgeHelper;
 
 // 3D 관련
 var scene, camera, renderer
-var blockGeometry, blockGeometry2;
+var blockGeometry;
 var blockColor = INITIAL_BLOCK_COLOR;
 
 // 필드 위 유닛들
@@ -44,6 +50,8 @@ function initialize() {
 	createStage( 15 );
 
 	onWindowResize();
+	
+	viewMode();
 }
 
 
@@ -66,7 +74,7 @@ function acquireUI() {
 
 	scene = new THREE.Scene();	
 
-	renderer = new THREE.WebGLRenderer( { antialias:true } );
+	renderer = new THREE.WebGLRenderer( { antialias:ANITALIAS } );
 	renderer.setClearColor( CANVAS_BACKGROUND_COLOR );
 	renderer.setSize( canvas.offsetWidth, canvas.offsetHeight );
 
@@ -87,10 +95,17 @@ function acquireUI() {
 	// 3D 그래픽 요소 초기화
 
 	blockGeometry = new THREE.BoxGeometry( BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE );
-	blockGeometry2 = new THREE.BoxGeometry( BLOCK_SIZE/2, BLOCK_SIZE/2, BLOCK_SIZE/2 );
 	guideBlock = new THREE.Mesh( blockGeometry, new THREE.MeshLambertMaterial( { color: blockColor, transparent: true, opacity: 0.5 } ) );
 	guideBlock.visible = false;
+	
+	var blockOutlineGeometry = new THREE.BoxGeometry( BLOCK_OUTLINE_SIZE , BLOCK_OUTLINE_SIZE, BLOCK_OUTLINE_SIZE );
+	
+	guideBlockEdgeHelper = new THREE.EdgesHelper( new THREE.Mesh( blockOutlineGeometry) );
+	guideBlockEdgeHelper.matrixAutoUpdate = true;
+	guideBlockEdgeHelper.visible = false;
+	
 	scene.add( guideBlock );
+	scene.add( guideBlockEdgeHelper );
 }
 
 
@@ -171,17 +186,30 @@ function onCanvasMouseMove( event ) {
 	_relativePosition.unproject( camera );
 	_raycaster.ray.set( camera.position, _relativePosition.sub( camera.position ).normalize() );
 	var intersects = _raycaster.intersectObjects( units );
-
+	
+	// 스테이지 위에 있을 경우에만
 	if ( intersects.length > 0 ) {
-
 		var intersect = intersects[ 0 ];
-
+		
 		switch( editMode ) {
-
-			case EDIT_MODE.VIEW:
+			
+			case EDIT_MODE.DESTRUCT:
 				 if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false, opacity: 1 } ); }
-				 intersect.object.material.setValues( { transparent: true, opacity: 0.8 } );
+				 intersect.object.material.setValues( { transparent: true, opacity: 0.5 } );
 				 _prevIntersectUnit = intersect.object;
+			
+			case EDIT_MODE.VIEW:
+				
+				// 마우스가 블록 위에 있을 경우에만 외곽선을 표시한다.
+				if ( intersects.length > 1){
+				
+					guideBlockEdgeHelper.visible = true;
+					guideBlockEdgeHelper.position.copy(intersect.object.position);
+					
+				} else {
+					guideBlockEdgeHelper.visible = false;
+				}
+				 
 				 break;
 
 			case EDIT_MODE.CONSTRUCT:
@@ -189,16 +217,10 @@ function onCanvasMouseMove( event ) {
 				 guideBlock.position.divideScalar( BLOCK_SIZE ).floor().multiplyScalar( BLOCK_SIZE ).addScalar( BLOCK_SIZE / 2 );
 				 break;
 
-			case EDIT_MODE.DESTRUCT:
-				 if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false, opacity: 1 } ); }
-				 intersect.object.material.setValues( { transparent: true, opacity: 0.5 } );
-				 _prevIntersectUnit = intersect.object;
-				 break;
+			
 		}
-
+		render();
 	}
-	render();
-
 }
 
 /**
@@ -232,9 +254,9 @@ function onCanvasMouseDown( event ) {
 				 units.splice( units.indexOf( intersect.object ), 1 );
 				 break;
 		}
-
+		render();
 	}
-	render();
+	
 
 }
 
@@ -242,8 +264,13 @@ function onCanvasMouseDown( event ) {
 function viewMode() {
 
 	editMode = EDIT_MODE.VIEW;
+	
 	guideBlock.visible = false;
-	if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false, opacity: 1, wireframe: false } ); }
+	guideBlockEdgeHelper.visible = true;
+	guideBlockEdgeHelper.material.setValues({color:BLOCK_SELECTION_OUTLINE_COLOR});
+	
+	if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false} ); }
+	
 	render();
 }
 
@@ -252,11 +279,13 @@ function constructMode() {
 	if( editMode != EDIT_MODE.VIEW ) return;
 
 	editMode = EDIT_MODE.CONSTRUCT;
-
-	if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false, opacity: 1, wireframe: false } ); }
+	
 	guideBlock.visible = true;
+	guideBlockEdgeHelper.visible = false;
 	guideBlock.material.setValues( { color:blockColor } );
-
+	
+	if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false} ); }
+	
 	render();
 }
 
@@ -265,9 +294,15 @@ function destructMode() {
 	if( editMode != EDIT_MODE.VIEW ) return;
 
 	editMode = EDIT_MODE.DESTRUCT;
-	if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false, opacity: 1, wireframe: false } ); }
+	
+	
+	
 	guideBlock.visible = false;
-
+	guideBlockEdgeHelper.material.setValues({color:BLOCK_DESTRUCTION_OUTLINE_COLOR});
+	guideBlockEdgeHelper.visible = true;
+	
+	if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false} ); }
+	
 	render();
 }
 
