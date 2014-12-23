@@ -3,7 +3,7 @@
 * SANGJA PROJECT
 * module.blockbuilder
 *
-* 2014. 12. 21
+* 2014. 12. 21 ~
 * 김현준 프로그래밍
 *
 **************************************/
@@ -17,13 +17,14 @@ var BLOCK_SIZE = 10;
 var BLOCK_OUTLINE_SIZE = 10.1;
 
 var CANVAS_BACKGROUND_COLOR = 0xf0f0f0;
-var BLOCK_SELECTION_OUTLINE_COLOR = 0x555555;
+var BLOCK_ROLLOVER_OUTLINE_COLOR = 0x555555;
+var BLOCK_SELECTION_OUTLINE_COLOR = 0x00FF00;
 var BLOCK_DESTRUCTION_OUTLINE_COLOR = 0xFF0000;
 var INITIAL_BLOCK_COLOR = 0xffffff;
 
 // 사용자 UI 관련
 var toolbar, canvas, color_picker, controls;
-var guideGrid, guideBlock, guideBlockEdgeHelper;
+var guideGrid, guideBlock, guideBlockEdgeHelper, guideBlockEdgeHelperForSelection;
 
 // 3D 관련
 var scene, camera, renderer
@@ -32,9 +33,12 @@ var blockColor = INITIAL_BLOCK_COLOR;
 
 // 필드 위 유닛들
 var units = [];
+var selectedUnits = [];
+var guideEdges = [];
 
 // 편집 설정
 var editMode = EDIT_MODE.VIEW;
+var multiSelect = false;
 
 initialize();
 render();
@@ -104,6 +108,9 @@ function acquireUI() {
 	guideBlockEdgeHelper.matrixAutoUpdate = true;
 	guideBlockEdgeHelper.visible = false;
 	
+	guideBlockEdgeHelperForSelection = new THREE.EdgesHelper( new THREE.Mesh( blockOutlineGeometry) );
+	guideBlockEdgeHelperForSelection.matrixAutoUpdate = true;
+
 	scene.add( guideBlock );
 	scene.add( guideBlockEdgeHelper );
 }
@@ -194,6 +201,7 @@ function onCanvasMouseMove( event ) {
 		switch( editMode ) {
 			
 			case EDIT_MODE.DESTRUCT:
+			
 				 if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false, opacity: 1 } ); }
 				 intersect.object.material.setValues( { transparent: true, opacity: 0.5 } );
 				 _prevIntersectUnit = intersect.object;
@@ -201,7 +209,8 @@ function onCanvasMouseMove( event ) {
 			case EDIT_MODE.VIEW:
 				
 				// 마우스가 블록 위에 있을 경우에만 외곽선을 표시한다.
-				if ( intersects.length > 1){
+				// 조건 추가: selection 상태가 아닐 때 
+				if ( intersects.length > 1 && selectedUnits.indexOf( intersect ) < 0 ){
 				
 					guideBlockEdgeHelper.visible = true;
 					guideBlockEdgeHelper.position.copy(intersect.object.position);
@@ -239,7 +248,39 @@ function onCanvasMouseDown( event ) {
 		var intersect = intersects[ 0 ];
 
 		switch( editMode ) {
+			
+			case EDIT_MODE.VIEW:
 
+				// 다중 선택 모드
+				if ( multiSelect ) {
+
+					// 블록을 눌렀을 경우에만
+					if ( intersects.length > 1 ){
+
+						if( selectedUnits.indexOf( intersect.object ) < 0) {
+							addGuideEdge( intersect.object );
+							selectedUnits.push( intersect.object );
+						} 
+
+						// 이미 선택된 블록을 또 누르면
+						else {
+							removeGuideEdge( intersect.object );
+							selectedUnits.splice( selectedUnits.indexOf( intersect.object ), 1 );
+						}
+
+						
+					}
+
+				}
+
+				// 해제 후 단일 선택 (기본)
+				else {
+					clearGuideEdges();
+					selectedUnits = [];
+				}
+			
+				break;
+			
 			case EDIT_MODE.CONSTRUCT:
 				 var block = new THREE.Mesh( blockGeometry, new THREE.MeshLambertMaterial( { color: blockColor } ) );
 				 block.position.copy( intersect.point ).add( intersect.face.normal );
@@ -261,13 +302,45 @@ function onCanvasMouseDown( event ) {
 }
 
 
+function addGuideEdge( block ) {
+
+	var newGuideEdge = guideBlockEdgeHelperForSelection.clone();
+	newGuideEdge.material.setValues( { color: BLOCK_SELECTION_OUTLINE_COLOR } );
+	newGuideEdge.position.copy( block.position );
+	newGuideEdge.matrixAutoUpdate = true;
+	guideEdges.push( newGuideEdge );
+	scene.add( newGuideEdge );
+}
+
+function removeGuideEdge( block ) {
+
+	var blockIndex = selectedUnits.indexOf( block );
+
+	if( blockIndex >= 0 ) {
+		
+		scene.remove( guideEdges[blockIndex] );
+		guideEdges.splice( blockIndex, 1 );
+	}
+
+	
+}
+
+function clearGuideEdges() {
+	for ( var i in guideEdges ) {
+		scene.remove( guideEdges[i] );
+	}
+	guideEdges = [];
+
+	render();
+}
+
 function viewMode() {
 
 	editMode = EDIT_MODE.VIEW;
 	
 	guideBlock.visible = false;
 	guideBlockEdgeHelper.visible = true;
-	guideBlockEdgeHelper.material.setValues({color:BLOCK_SELECTION_OUTLINE_COLOR});
+	guideBlockEdgeHelper.material.setValues({color:BLOCK_ROLLOVER_OUTLINE_COLOR});
 	
 	if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false} ); }
 	
@@ -312,6 +385,7 @@ function destructMode() {
 function onDocumentKeyDown( event ) {
 
 	switch( event.keyCode ) {
+		case 16: if ( editMode == EDIT_MODE.VIEW ) { multiSelect = true; } break;
 		case 18: destructMode(); break;
 		case 32: constructMode(); break;
 	}
@@ -324,6 +398,7 @@ function onDocumentKeyDown( event ) {
 function onDocumentKeyUp( event ) {
 
 	switch ( event.keyCode ) {
+		case 16: if ( multiSelect ) { multiSelect = false; } break;
 		case 18: viewMode(); break;
 		case 32: viewMode(); break;
 	}
