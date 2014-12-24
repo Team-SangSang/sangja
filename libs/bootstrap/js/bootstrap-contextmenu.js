@@ -176,6 +176,10 @@
 			var $this = $(this)
 				, data = $this.data('context')
 				, options = (typeof option == 'object') && option;
+			/*
+			* Modified By HyunJun Kim
+			* Allows target change
+			*/
 			if (data) { data.closemenu(); data = null; }
 			if (!data) $this.data('context', (data = new ContextMenu($this, options)));
 			if (typeof option == 'string') data[option].call(data, e);

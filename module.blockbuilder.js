@@ -251,50 +251,25 @@ function onCanvasMouseDown( event ) {
 			
 			case EDIT_MODE.VIEW:
 
-
-				// 오른쪽 마우스 클릭일 경우 컨텍스트 메뉴 표시
-				if ( isRightMouseClick( event ) ) {
-					// 블록을 눌렀을 경우에만
-					if ( intersects.length > 1 ){
-						
-						
-						$('#canvas').contextmenu({
- 							target: '#context-menu'
-						});
-					}
-
-					// 그 외의 경우 (기본값)
-					else {
-						
-						$('#canvas').contextmenu({
- 							target: '#default-menu'
-						});
-					}
-					break;
-				}
+				// 왼쪽 마우스 클릭만 인정
+				if( ! isLeftMouseClick( event ) ) break;
 
 				// 다중 선택 모드
 				if ( multiSelect ) {
-
 					// 블록을 눌렀을 경우에만
 					if ( intersects.length > 1 ){
 
 						if( selectedUnits.indexOf( intersect.object ) < 0) {
 							addGuideEdge( intersect.object );
 							selectedUnits.push( intersect.object );
-						} 
-
+						}
 						// 이미 선택된 블록을 또 누르면
 						else {
 							removeGuideEdge( intersect.object );
 							selectedUnits.splice( selectedUnits.indexOf( intersect.object ), 1 );
-						}
-
-						
+						}						
 					}
-
 				}
-
 				// 해제 후 단일 선택 (기본)
 				else {
 					clearGuideEdges();
@@ -320,11 +295,56 @@ function onCanvasMouseDown( event ) {
 				// 왼쪽 마우스 클릭만 인정
 				if( ! isLeftMouseClick( event ) ) break;
 
-				if(intersects.length < 2) break;
 				scene.remove( intersect.object );
 				units.splice( units.indexOf( intersect.object ), 1 );
 				break;
 		}
+
+
+		// 오른쪽 마우스 클릭일 경우 컨텍스트 메뉴 표시
+		if ( isRightMouseClick( event ) ) {
+
+			// 뷰모드에서 블록을 눌렀을 경우에만
+			if ( intersects.length > 1 && editMode == EDIT_MODE.VIEW){					
+						
+				$('#canvas').contextmenu({
+ 					target: '#unit-menu',
+ 					onItem: function(context,e) {
+ 						console.log(e.target.id);
+ 						switch( e.target.id ) {
+ 							case "unit-menu-remove-block":
+ 								if(selectedUnits.length > 0){
+ 									clearGuideEdges();
+
+ 									for(var i in selectedUnits){
+ 										scene.remove( selectedUnits[i] );
+										units.splice( units.indexOf( selectedUnits[i] ), 1 );
+										// 메모리 management 추가요함
+ 									}
+ 									selectedUnits = [];
+
+ 								} else {
+	 								removeGuideEdge(intersect.object);
+	 								scene.remove( intersect.object );
+									units.splice( units.indexOf( intersect.object ), 1 );
+								}
+ 								break;
+ 						}
+ 					}
+				});
+			}
+
+			// 그 외의 경우 (기본값)
+			else {
+						
+				$('#canvas').contextmenu({
+ 					before: function(e,context) {
+						return false;
+  					}
+				});
+			}			
+		}
+
 		render();
 	}
 	
