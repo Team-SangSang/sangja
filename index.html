@@ -6,10 +6,12 @@
 
 	<link type="text/css" rel="stylesheet" href="./module.blockbuilder.css"/>
 	<link type="text/css" rel="stylesheet" href="./libs/bootstrap/css/bootstrap.min.css">
+	<link type="text/css" rel="stylesheet" href="./libs/bootstrap/css/bootstrap-theme.min.css">
 	<link type="text/css" rel="stylesheet" href="./libs/spectrum/spectrum.css">
 
 	<script type="text/javascript" src="./libs/jquery/jquery-2.1.1.min.js"></script>
 	<script type="text/javascript" src="./libs/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="./libs/bootstrap/js/bootstrap-contextmenu.js"></script>
 	<script type="text/javascript" src="./libs/threejs/three.min.js"></script>
 	<script type="text/javascript" src="./libs/threejs/three.orbitcontrol.js"></script>
 	<script type="text/javascript" src="./libs/spectrum/spectrum.js"></script>
@@ -37,7 +39,27 @@
 		
 	</nav>
 
-	<div id="canvas" class="canvas"></div>
+	<div class="container-fluid">
+
+		<div id="canvas" class="canvas"></div>
+
+	</div>
+
+	<div id="default-menu">
+		<ul class="dropdown-menu" role="menu">
+			<li><a tabindex="-1">표시할 내용 없음!</a></li>
+		</ul>
+	</div>
+
+	<div id="context-menu">
+		<ul class="dropdown-menu" role="menu">
+			<li><a tabindex="-1">블록 제거</a></li>
+			<li><a tabindex="-1">위치 이동</a></li>
+			<li><a tabindex="-1">생상 변경</a></li>
+			<li class="divider"></li>
+			<li><a tabindex="-1">ID 부여</a></li>
+		</ul>
+	</div>
 
 	<script>
 		$("#color-picker").spectrum({

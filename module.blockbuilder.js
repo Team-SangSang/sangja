@@ -104,10 +104,10 @@ function acquireUI() {
 	
 	var blockOutlineGeometry = new THREE.BoxGeometry( BLOCK_OUTLINE_SIZE , BLOCK_OUTLINE_SIZE, BLOCK_OUTLINE_SIZE );
 	
-	guideBlockEdgeHelper = new THREE.EdgesHelper( new THREE.Mesh( blockOutlineGeometry) );
-	guideBlockEdgeHelper.matrixAutoUpdate = true;
+	guideBlockEdgeHelper = new THREE.EdgesHelper( new THREE.Mesh( blockOutlineGeometry) );	
+	guideBlockEdgeHelper.matrixAutoUpdate = true;	
 	guideBlockEdgeHelper.visible = false;
-	
+
 	guideBlockEdgeHelperForSelection = new THREE.EdgesHelper( new THREE.Mesh( blockOutlineGeometry) );
 	guideBlockEdgeHelperForSelection.matrixAutoUpdate = true;
 
@@ -187,7 +187,7 @@ var _prevIntersectUnit;
 
 function onCanvasMouseMove( event ) {
 
-	event.preventDefault();
+	//event.preventDefault();
 	
 	_relativePosition.set( ( ( event.clientX - _canvasX ) / canvas.offsetWidth ) * 2 - 1, - ( ( event.clientY - _canvasY ) / canvas.offsetHeight ) * 2 + 1, 0.5 );
 	_relativePosition.unproject( camera );
@@ -238,7 +238,7 @@ function onCanvasMouseMove( event ) {
 function onCanvasMouseDown( event ) {
 
 	event.preventDefault();
-	
+
 	_relativePosition.set( ( ( event.clientX - _canvasX ) / canvas.offsetWidth ) * 2 - 1, - ( ( event.clientY - _canvasY ) / canvas.offsetHeight ) * 2 + 1, 0.5 );
 	_relativePosition.unproject( camera );
 	_raycaster.ray.set( camera.position, _relativePosition.sub( camera.position ).normalize() );
@@ -250,6 +250,28 @@ function onCanvasMouseDown( event ) {
 		switch( editMode ) {
 			
 			case EDIT_MODE.VIEW:
+
+
+				// 오른쪽 마우스 클릭일 경우 컨텍스트 메뉴 표시
+				if ( isRightMouseClick( event ) ) {
+					// 블록을 눌렀을 경우에만
+					if ( intersects.length > 1 ){
+						
+						
+						$('#canvas').contextmenu({
+ 							target: '#context-menu'
+						});
+					}
+
+					// 그 외의 경우 (기본값)
+					else {
+						
+						$('#canvas').contextmenu({
+ 							target: '#default-menu'
+						});
+					}
+					break;
+				}
 
 				// 다중 선택 모드
 				if ( multiSelect ) {
@@ -282,23 +304,39 @@ function onCanvasMouseDown( event ) {
 				break;
 			
 			case EDIT_MODE.CONSTRUCT:
-				 var block = new THREE.Mesh( blockGeometry, new THREE.MeshLambertMaterial( { color: blockColor } ) );
-				 block.position.copy( intersect.point ).add( intersect.face.normal );
-				 block.position.divideScalar( BLOCK_SIZE ).floor().multiplyScalar( BLOCK_SIZE ).addScalar( BLOCK_SIZE / 2 );
-				 scene.add( block );
-				 units.push( block );
-				 break;
+
+				// 왼쪽 마우스 클릭만 인정
+				if( ! isLeftMouseClick( event ) ) break;
+
+				var block = new THREE.Mesh( blockGeometry, new THREE.MeshLambertMaterial( { color: blockColor } ) );
+				block.position.copy( intersect.point ).add( intersect.face.normal );
+				block.position.divideScalar( BLOCK_SIZE ).floor().multiplyScalar( BLOCK_SIZE ).addScalar( BLOCK_SIZE / 2 );
+				scene.add( block );
+				units.push( block );
+				break;
 
 			case EDIT_MODE.DESTRUCT:
-				 if(intersects.length < 2) return;
-				 scene.remove( intersect.object );
-				 units.splice( units.indexOf( intersect.object ), 1 );
-				 break;
+
+				// 왼쪽 마우스 클릭만 인정
+				if( ! isLeftMouseClick( event ) ) break;
+
+				if(intersects.length < 2) break;
+				scene.remove( intersect.object );
+				units.splice( units.indexOf( intersect.object ), 1 );
+				break;
 		}
 		render();
 	}
 	
 
+}
+
+function isLeftMouseClick( event ) {
+	return ( event.which ) ? event.which == 1 && event.button == 0 : ( event.type == 'click' ) ? event.button == 0 : event.button == 1;
+}
+
+function isRightMouseClick( event ) {
+	return event.button == 2;
 }
 
 
@@ -339,7 +377,6 @@ function viewMode() {
 	editMode = EDIT_MODE.VIEW;
 	
 	guideBlock.visible = false;
-	guideBlockEdgeHelper.visible = true;
 	guideBlockEdgeHelper.material.setValues({color:BLOCK_ROLLOVER_OUTLINE_COLOR});
 	
 	if(_prevIntersectUnit != null) { _prevIntersectUnit.material.setValues( { transparent: false} ); }
