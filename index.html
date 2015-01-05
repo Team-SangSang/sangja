@@ -22,13 +22,7 @@
 
 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
-			<div class="btn-group" data-toggle="buttons">
-				<label id="selection-mode-button" class="btn btn-default active">
-					<input type="radio" name="options">선택</label>
-				<label id="construction-mode-button" class="btn btn-default">
-					<input type="radio" name="options">추가</label>
-				<label id="destruction-mode-button" class="btn btn-danger">
-					<input type="radio" name="options">제거</label>
+			<div id="toolbox" class="btn-group" data-toggle="buttons">
 			</div>
 			<input type="text" id="color-picker" class="btn btn-default navbar-btn">
 			<button type="button" id="settings-button" class="btn btn-default navbar-btn">
@@ -61,7 +55,7 @@
 		    preferredFormat: "hex",
 		    togglePaletteOnly: true,
 		    color: "#ffffff",
-		    hideAfterPaletteSelect:true,
+		    hideAfterPaletteSelect: true,
 		    togglePaletteMoreText: 'more',
 		    togglePaletteLessText: 'less',
 		    palette: [
@@ -73,14 +67,13 @@
 		        ["#c00","#e69138","#f1c232","#6aa84f","#45818e","#3d85c6","#674ea7","#a64d79"],
 		        ["#900","#b45f06","#bf9000","#38761d","#134f5c","#0b5394","#351c75","#741b47"],
 		        ["#600","#783f04","#7f6000","#274e13","#0c343d","#073763","#20124d","#4c1130"]
-		    ],
-		    change: function(color) {
-			    onColorChange(color) // #ff0000
-			}
+		    ]
 		});
 		</script>
 
 	<script type="text/javascript" src="./module.blockbuilder.js"></script>
+    <script type="text/javascript" src="./module.blockbuilder.addbox.js"></script>
+    <script type="text/javascript" src="./module.blockbuilder.removebox.js"></script>
 
 </body>
 </html>
