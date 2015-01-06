@@ -56,7 +56,7 @@
                 BlockBuilder.scene.remove( intersect.object );
                 
                 var list = BlockBuilder.world.blockList;
-				list.splice( list.indexOf( intersect.object ), 1  );
+                list.splice( list.indexOf( intersect.object ), 1  );
             }
         }
     }

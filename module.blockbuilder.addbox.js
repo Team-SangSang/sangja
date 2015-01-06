@@ -3,7 +3,7 @@
 (function() {
     //가이드 블록 생성 처리
     var guideBlock = new THREE.Mesh( BlockBuilder.blockGeometry, new THREE.MeshLambertMaterial( { color: BlockBuilder.currentBlockColor, transparent: true, opacity: 0.5 } ) );
-	guideBlock.visible = false;
+    guideBlock.visible = false;
     BlockBuilder.scene.add( guideBlock );
     
     //교차점으로부터 다음 블록 위치를 결정하는 함수

@@ -32,14 +32,14 @@ BlockBuilder.blockGeometry = new THREE.BoxGeometry( BlockBuilder.BLOCK_SIZE, Blo
     
     function createStage() {
         //3D UI 초기화
-        scene = new THREE.Scene();	
+        scene = new THREE.Scene();
 
         renderer = new THREE.WebGLRenderer( { antialias: ANTIALIAS } );
         renderer.setClearColor( CANVAS_BACKGROUND_COLOR );
         renderer.setSize( canvas.offsetWidth, canvas.offsetHeight );
 
         canvas.appendChild( renderer.domElement );
-	
+
         camera = new THREE.PerspectiveCamera( 40, canvas.offsetWidth / canvas.offsetHeight, 1, 20000 );
         camera.position.set( 100, 100, 100 );
         camera.lookAt( new THREE.Vector3() );
@@ -196,5 +196,3 @@ BlockBuilder.blockGeometry = new THREE.BoxGeometry( BlockBuilder.BLOCK_SIZE, Blo
     canvas.addEventListener( 'mousedown', onCanvasMouseDown );
     canvas.addEventListener( 'mouseup', onCanvasMouseUp );
 })();
-
-
