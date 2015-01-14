@@ -173,7 +173,7 @@ BlockBuilder.blockGeometry = new THREE.BoxGeometry(BlockBuilder.BLOCK_SIZE, Bloc
         var idString, toolButton;
         
         idString = 'toolbox-' + id;
-        $('#toolbox').append('<label id="' + idString + '" class="btn btn-default"><input type="radio" name="options">' + label + '</label>');
+        $('#toolbox').append('<label id="' + idString + '" class="btn btn-default navbar-btn"><input type="radio" name="options">' + label + '</label>');
         
         //모드 변경 처리
         toolButton = document.getElementById(idString);

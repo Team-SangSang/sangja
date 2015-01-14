@@ -11,7 +11,6 @@
 
     <script type="text/javascript" src="./libs/jquery/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="./libs/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="./libs/bootstrap/js/bootstrap-contextmenu.js"></script>
     <script type="text/javascript" src="./libs/threejs/three.min.js"></script>
     <script type="text/javascript" src="./libs/threejs/three.orbitcontrol.js"></script>
     <script type="text/javascript" src="./libs/spectrum/spectrum.js"></script>
@@ -22,31 +21,18 @@
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
-            <div id="toolbox" class="btn-group" data-toggle="buttons">
+            <a class="navbar-brand" href="#">Sangja</a>
+            <p class="navbar-text">Toolbox</p>
+            <div id="toolbox" class="btn-group" role="group" data-toggle="buttons">
             </div>
             <input type="text" id="color-picker" class="btn btn-default navbar-btn">
-            <button type="button" id="settings-button" class="btn btn-default navbar-btn">
-                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                설정
-            </button>
         </div>
 
     </nav>
 
-    <div class="container-fluid">
-
+    <div id="main">
+        <div id="panel" class="panel"></div>
         <div id="canvas" class="canvas"></div>
-
-    </div>
-
-    <div id="unit-menu">
-        <ul class="dropdown-menu" role="menu">
-            <li role="presentation"><a id="unit-menu-remove-block" role="menuitem" tabindex="-1" href="#">유닛 삭제</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">그룹으로 만들기</a></li>
-            <li role="presentation" class="disabled"><a role="menuitem" tabindex="-1" href="#">유닛 수정 ...</a></li>
-            <li role="presentation" class="divider"></li>
-            <li role="presentation" class="disabled"><a role="menuitem" tabindex="-1" href="#">ID 부여</a></li>
-        </ul>
     </div>
 
     <script>
@@ -69,7 +55,7 @@
                 ["#600","#783f04","#7f6000","#274e13","#0c343d","#073763","#20124d","#4c1130"]
             ]
         });
-        </script>
+    </script>
 
     <script type="text/javascript" src="./module.blockbuilder.js"></script>
     <script type="text/javascript" src="./module.blockbuilder.addbox.js"></script>
