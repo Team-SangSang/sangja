@@ -141,6 +141,9 @@ BlockBuilder.blockGeometry = new THREE.BoxGeometry(BlockBuilder.BLOCK_SIZE, Bloc
                         clientY: event.clientY,
                         pageX: event.pageX,
                         pageY: event.pageY,
+                        ctrlKey: event.ctrlKey,
+                        shiftKey: event.shiftKey,
+                        altKey: event.altKey,
                         button: event.button
                     }
                 });
