@@ -22,6 +22,8 @@ BlockBuilder.blockGeometry = new THREE.BoxGeometry(BlockBuilder.BLOCK_SIZE, Bloc
         
         CANVAS_BACKGROUND_COLOR = 0xF0F0F0,
         
+        CLICK_WITHOUT_MOVE_TOLERANCE = 5,
+        
         //사용자 UI 관련
         canvas = document.getElementById('canvas'),
         canvasX,
@@ -133,9 +135,14 @@ BlockBuilder.blockGeometry = new THREE.BoxGeometry(BlockBuilder.BLOCK_SIZE, Bloc
     }
     
     function onCanvasMouseUp(event) {
+        var diffX, diffY, customEvent;
+        
         if (lastMouseDown !== null) {
-            if (lastMouseDown.clientX === event.clientX && lastMouseDown.clientY === event.clientY && lastMouseDown.button === event.button) {
-                var customEvent = new window.CustomEvent('clickWithoutMove', {
+            diffX = lastMouseDown.clientX - event.clientX;
+            diffY = lastMouseDown.clientY - event.clientY;
+            
+            if (Math.abs(diffX) < CLICK_WITHOUT_MOVE_TOLERANCE && Math.abs(diffY) < CLICK_WITHOUT_MOVE_TOLERANCE && lastMouseDown.button === event.button) {
+                customEvent = new window.CustomEvent('clickWithoutMove', {
                     detail: {
                         clientX: event.clientX,
                         clientY: event.clientY,
