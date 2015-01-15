@@ -10,7 +10,6 @@
     
     guideEdge =  new THREE.EdgesHelper(new THREE.Mesh(BlockBuilder.blockGeometry));
     guideEdge.material.setValues({ color: BLOCK_DESTRUCTION_OUTLINE_COLOR });
-    guideEdge.matrixAutoUpdate = true;
     guideEdge.visible = false;
     BlockBuilder.scene.add(guideEdge);
     
@@ -37,6 +36,7 @@
             intersect = intersects[0];
             
             guideEdge.position.copy(intersect.object.position);
+            guideEdge.updateMatrix();
             
             setTransparent(intersect.object);
             prevIntersectUnit = intersect.object;
