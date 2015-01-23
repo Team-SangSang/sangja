@@ -4,7 +4,7 @@
     "use strict";
     
     //가이드 블록 생성 처리
-    var guideBlock = new THREE.Mesh(BlockBuilder.blockGeometry, new THREE.MeshLambertMaterial({ color: BlockBuilder.currentBlockColor, transparent: true, opacity: 0.5 }));
+    var guideBlock = new BlockBuilder.Block({ color: BlockBuilder.currentBlockColor, transparent: true, opacity: 0.5 });
     guideBlock.visible = false;
     BlockBuilder.scene.add(guideBlock);
     
@@ -53,7 +53,7 @@
             if (intersects.length > 0) {
                 intersect = intersects[0];
                 
-                block = new THREE.Mesh(BlockBuilder.blockGeometry, new THREE.MeshLambertMaterial({ color: BlockBuilder.currentBlockColor }));
+                block = new BlockBuilder.Block({ color: BlockBuilder.currentBlockColor });
                 block.position.copy(getNextBlockPosition(intersect));
                 
                 BlockBuilder.scene.add(block);

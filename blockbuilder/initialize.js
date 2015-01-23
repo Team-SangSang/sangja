@@ -12,11 +12,44 @@ var BlockBuilder = {
     world: {}
 };
 
-BlockBuilder.blockGeometry = new THREE.BoxGeometry(BlockBuilder.BLOCK_SIZE, BlockBuilder.BLOCK_SIZE, BlockBuilder.BLOCK_SIZE);
-
 (function () {
     "use strict";
     
+    BlockBuilder.blockGeometry = new THREE.BoxGeometry(BlockBuilder.BLOCK_SIZE, BlockBuilder.BLOCK_SIZE, BlockBuilder.BLOCK_SIZE);
+    
+    //블록 클래스
+    BlockBuilder.Block = (function () {
+        function Block(setting) {
+            THREE.Mesh.call(this, BlockBuilder.blockGeometry, new THREE.MeshLambertMaterial(setting));
+            
+            this.type = 'Block';
+        }
+        
+        Block.prototype = Object.create(THREE.Mesh.prototype);
+        Block.prototype.constructor = Block;
+        
+        return Block;
+    }());
+    
+    //가이드 외곽선 관련 메서드 추가
+    THREE.Mesh.prototype.showGuideEdge = function (color) {
+        if (this.guideEdge === undefined) {
+            this.guideEdge = new THREE.EdgesHelper(this.clone());
+            this.guideEdge.position.copy(new THREE.Vector3());
+            this.guideEdge.updateMatrix();
+            this.add(this.guideEdge);
+        }
+        this.guideEdge.material.setValues({ color: color });
+        this.guideEdge.visible = true;
+    };
+    
+    THREE.Mesh.prototype.hideGuideEdge = function () {
+        if (this.guideEdge !== undefined) {
+            this.guideEdge.visible = false;
+        }
+    };
+    
+    //상수 선언
     var ANTIALIAS = true,
         GRID_COUNT = 15,
         

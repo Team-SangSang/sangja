@@ -5,50 +5,36 @@
     
     var BLOCK_SELECTION_OUTLINE_COLOR = 0x00FF00,
         
-        selectedBlocks = [],
-        selectionGuides = [],
-        selectionEdgeGuide;
-    
-    selectionEdgeGuide =  new THREE.EdgesHelper(new THREE.Mesh(BlockBuilder.blockGeometry));
-    selectionEdgeGuide.material.setValues({ color: BLOCK_SELECTION_OUTLINE_COLOR });
+        selectedBlocks = [];
     
     function deselectAll() {
         var index;
         
         while (selectedBlocks.length > 0) {
             index = selectedBlocks.length - 1;
+            selectedBlocks[index].hideGuideEdge();
             selectedBlocks[index].material.setValues({ transparent: false });
-            BlockBuilder.scene.remove(selectionGuides[index]);
             
             selectedBlocks.pop();
-            selectionGuides.pop();
         }
         
         BlockBuilder.world.render();
     }
     
     function toggleSelection(object) {
-        var blockIndex,
-            newGuide;
+        var blockIndex;
         blockIndex = selectedBlocks.indexOf(object);
         
         if (blockIndex === -1) {
+            object.showGuideEdge(BLOCK_SELECTION_OUTLINE_COLOR);
             object.material.setValues({ transparent: true, opacity: 0.8 });
             
-            newGuide = selectionEdgeGuide.clone();
-            newGuide.position.copy(object.position);
-            newGuide.updateMatrix();
-            BlockBuilder.scene.add(newGuide);
-            
             selectedBlocks.push(object);
-            selectionGuides.push(newGuide);
         } else {
+            object.hideGuideEdge();
             object.material.setValues({ transparent: false });
             
-            BlockBuilder.scene.remove(selectionGuides[blockIndex]);
-            
             selectedBlocks.splice(blockIndex, 1);
-            selectionGuides.splice(blockIndex, 1);
         }
     }
     

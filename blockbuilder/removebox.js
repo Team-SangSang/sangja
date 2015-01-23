@@ -5,16 +5,11 @@
     
     var BLOCK_DESTRUCTION_OUTLINE_COLOR = 0xFF0000,
         
-        prevIntersectUnit = null,
-        guideEdge;
-    
-    guideEdge =  new THREE.EdgesHelper(new THREE.Mesh(BlockBuilder.blockGeometry));
-    guideEdge.material.setValues({ color: BLOCK_DESTRUCTION_OUTLINE_COLOR });
-    guideEdge.visible = false;
-    BlockBuilder.scene.add(guideEdge);
+        prevIntersectUnit = null;
     
     function resetPrevInstersect() {
         if (prevIntersectUnit !== null) {
+            prevIntersectUnit.hideGuideEdge();
             prevIntersectUnit.material.setValues({ transparent: false });
         }
     }
@@ -32,16 +27,12 @@
         
         resetPrevInstersect();
         if (intersects.length > 0) {
-            guideEdge.visible = true;
             intersect = intersects[0];
             
-            guideEdge.position.copy(intersect.object.position);
-            guideEdge.updateMatrix();
+            intersect.object.showGuideEdge(BLOCK_DESTRUCTION_OUTLINE_COLOR);
             
             setTransparent(intersect.object);
             prevIntersectUnit = intersect.object;
-        } else {
-            guideEdge.visible = false;
         }
         
         BlockBuilder.world.render();
@@ -57,7 +48,6 @@
             
             if (intersects.length > 0) {
                 resetPrevInstersect();
-                guideEdge.visible = false;
                 
                 intersect = intersects[0];
                 
@@ -79,7 +69,6 @@
             BlockBuilder.canvas.removeEventListener('mousemove', onCanvasMouseMove);
             BlockBuilder.canvas.removeEventListener('clickWithoutMove', onCanvasClickWithoutMove);
             resetPrevInstersect();
-            guideEdge.visible = false;
         }
     });
 }());
