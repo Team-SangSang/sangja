@@ -60,7 +60,8 @@
     }
     
     //s키
-    BlockBuilder.addMode('삭제', 'remove', 83, {
+    BlockBuilder.addMode('삭제', 83, {
+        id: 'remove',
         activate: function () {
             BlockBuilder.canvas.addEventListener('mousemove', onCanvasMouseMove);
             BlockBuilder.canvas.addEventListener('clickWithoutMove', onCanvasClickWithoutMove);

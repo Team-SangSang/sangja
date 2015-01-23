@@ -212,21 +212,30 @@ var BlockBuilder = {
     BlockBuilder.currentMode = null;
     
     //BlockBuilder 모드 추가 함수
-    BlockBuilder.addMode = function (label, id, key, mode) {
-        var idString, toolButton;
+    BlockBuilder.addMode = function (label, key, mode, html) {
+        var DEFAULT_HTML = 'No menu for this tool', buttonId, menuId, toolButton;
         
-        idString = 'toolbox-' + id;
-        $('#toolbox').append('<label id="' + idString + '" class="btn btn-default navbar-btn"><input type="radio" name="options">' + label + '</label>');
+        html = html === undefined ? DEFAULT_HTML : html;
+        
+        buttonId = 'toolbox-' + mode.id;
+        menuId = 'toolmenu-' + mode.id;
+        
+        $('#toolbox').append('<label id="' + buttonId + '" class="btn btn-default navbar-btn"><input type="radio" name="options">' + label + '</label>');
+        $('#tool-menu').append('<div id="' + menuId + '">' + html + '</div>');
+        $('#' + menuId).css('display', 'none');
         
         //모드 변경 처리
-        toolButton = document.getElementById(idString);
+        toolButton = document.getElementById(buttonId);
         
         toolButton.addEventListener('click', function () {
             if (BlockBuilder.currentMode !== null) {
+                $('#toolmenu-' + BlockBuilder.currentMode.id).css('display', 'none');
                 BlockBuilder.currentMode.deactivate();
             }
             
             BlockBuilder.currentMode = mode;
+            
+            $('#toolmenu-' + mode.id).css('display', '');
             mode.activate();
             
             render();

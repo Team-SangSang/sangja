@@ -67,7 +67,8 @@
     //TODO: 기준 평면 아래(z 좌표 음수) 처리하기
     
     //a키
-    BlockBuilder.addMode('추가', 'add', 65, {
+    BlockBuilder.addMode('추가', 65, {
+        id: 'add',
         activate: function () {
             BlockBuilder.canvas.addEventListener('mousemove', onCanvasMouseMove);
             BlockBuilder.canvas.addEventListener('clickWithoutMove', onCanvasClickWithoutMove);

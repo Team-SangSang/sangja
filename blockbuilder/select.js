@@ -1,11 +1,31 @@
-/*global THREE, BlockBuilder*/
+/*global $, THREE, BlockBuilder*/
 
 (function () {
     "use strict";
     
     var BLOCK_SELECTION_OUTLINE_COLOR = 0x00FF00,
+        SELECT_NONE_ID = 'select-none',
+        SELECTED_ID = 'select-selected',
         
+        html,
         selectedBlocks = [];
+    
+    html = '<div id="' + SELECT_NONE_ID + '">No blocks selected</div>' + '<div id="' + SELECTED_ID + '"></div>';
+    
+    function displayMenu() {
+        var selectNone = $('#' + SELECT_NONE_ID),
+            selected = $('#' + SELECTED_ID);
+        
+        selectNone.css('display', 'none');
+        selected.css('display', 'none');
+        
+        if (selectedBlocks.length === 0) {
+            selectNone.css('display', '');
+        } else {
+            selected.css('display', '');
+            selected.html(selectedBlocks.length + ' blocks selected');
+        }
+    }
     
     function deselectAll() {
         var index;
@@ -65,17 +85,21 @@
             }
         }
         
+        displayMenu();
+        
         BlockBuilder.world.render();
     }
     
     //d키
-    BlockBuilder.addMode('선택', 'select', 68, {
+    BlockBuilder.addMode('선택', 68, {
+        id: 'select',
         activate: function () {
             BlockBuilder.canvas.addEventListener('clickWithoutMove', onCanvasClickWithoutMove);
+            displayMenu();
         },
         deactivate: function () {
             BlockBuilder.canvas.removeEventListener('clickWithoutMove', onCanvasClickWithoutMove);
             deselectAll();
         }
-    });
+    }, html);
 }());
