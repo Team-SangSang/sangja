@@ -21,7 +21,7 @@
     function onCanvasMouseMove(event) {
         var raycaster, intersects, intersect;
 
-        raycaster = BlockBuilder.world.getMouseRaycaster(event);
+        raycaster = BlockBuilder.util.getMouseRaycaster(event);
         
         intersects = raycaster.intersectObjects(BlockBuilder.world.blockList);
         
@@ -35,14 +35,14 @@
             prevIntersectUnit = intersect.object;
         }
         
-        BlockBuilder.world.render();
+        BlockBuilder.render();
     }
     
     function onCanvasClickWithoutMove(event) {
         var raycaster, intersects, intersect, blockList;
         
         if (event.detail.button === 0) {
-            raycaster = BlockBuilder.world.getMouseRaycaster(event.detail);
+            raycaster = BlockBuilder.util.getMouseRaycaster(event.detail);
             
             intersects = raycaster.intersectObjects(BlockBuilder.world.blockList);
             
@@ -51,10 +51,7 @@
                 
                 intersect = intersects[0];
                 
-                BlockBuilder.scene.remove(intersect.object);
-                
-                blockList = BlockBuilder.world.blockList;
-                blockList.splice(blockList.indexOf(intersect.object), 1);
+                BlockBuilder.world.removeBlock(intersect.object);
             }
         }
     }

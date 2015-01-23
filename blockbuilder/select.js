@@ -37,8 +37,6 @@
             
             selectedBlocks.pop();
         }
-        
-        BlockBuilder.world.render();
     }
     
     function toggleSelection(object) {
@@ -54,7 +52,7 @@
             object.hideGuideEdge();
             object.material.setValues({ transparent: false });
             
-            selectedBlocks.splice(blockIndex, 1);
+            selectedBlocks.findAndRemove(object);
         }
     }
     
@@ -62,7 +60,7 @@
         var raycaster, intersects, intersect;
         
         if (event.detail.button === 0) {
-            raycaster = BlockBuilder.world.getMouseRaycaster(event.detail);
+            raycaster = BlockBuilder.util.getMouseRaycaster(event.detail);
             
             intersects = raycaster.intersectObjects(BlockBuilder.world.blockList);
             
@@ -87,7 +85,7 @@
         
         displayMenu();
         
-        BlockBuilder.world.render();
+        BlockBuilder.render();
     }
     
     //d키
@@ -100,6 +98,7 @@
         deactivate: function () {
             BlockBuilder.canvas.removeEventListener('clickWithoutMove', onCanvasClickWithoutMove);
             deselectAll();
+            BlockBuilder.render();
         }
     }, html);
 }());

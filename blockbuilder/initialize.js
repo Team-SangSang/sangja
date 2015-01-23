@@ -9,13 +9,24 @@
 var BlockBuilder = {
     BLOCK_SIZE: 10,
     currentBlockColor: 0xFFFFFF,
-    world: {}
+    
+    util: {} //utility functions
 };
 
 (function () {
     "use strict";
     
     BlockBuilder.blockGeometry = new THREE.BoxGeometry(BlockBuilder.BLOCK_SIZE, BlockBuilder.BLOCK_SIZE, BlockBuilder.BLOCK_SIZE);
+    
+    Array.prototype.findAndRemove = function (target) {
+        var index = this.indexOf(target);
+        
+        if (index !== -1) {
+            this.splice(index, 1);
+        }
+        
+        return index;
+    };
     
     //블록 클래스
     BlockBuilder.Block = (function () {
@@ -29,6 +40,50 @@ var BlockBuilder = {
         Block.prototype.constructor = Block;
         
         return Block;
+    }());
+    
+    //유니온 클래스
+    BlockBuilder.Union = (function () {
+        function Union() {
+            THREE.Object3D.call(this);
+            
+            this.type = 'Union';
+            
+            this.objectList = []; //blocks + unions
+            this.blockList = []; //only blocks
+        }
+        
+        Union.prototype = Object.create(THREE.Object3D.prototype);
+        Union.prototype.constructor = Union;
+        
+        Union.prototype.convertVoxelPosition = function (vector) {
+            var result = new THREE.Vector3().copy(vector);
+            result.multiplyScalar(BlockBuilder.BLOCK_SIZE).addScalar(BlockBuilder.BLOCK_SIZE * 0.5);
+            
+            return result;
+        };
+        
+        Union.prototype.createBlock = function (vector, setting) {
+            var block = new BlockBuilder.Block(setting);
+            
+            block.position.copy(this.convertVoxelPosition(vector));
+            
+            this.objectList.push(block);
+            this.blockList.push(block);
+            
+            this.add(block);
+        };
+        
+        Union.prototype.removeBlock = function (block) {
+            this.objectList.findAndRemove(block);
+            this.blockList.findAndRemove(block);
+            
+            this.remove(block);
+        };
+        
+        //TODO clone 구현
+        
+        return Union;
     }());
     
     //가이드 외곽선 관련 메서드 추가
@@ -121,7 +176,7 @@ var BlockBuilder = {
         plane.visible = false;
         scene.add(plane);
         
-        BlockBuilder.world.plane = plane;
+        BlockBuilder.plane = plane;
     }
     
     function render() {
@@ -207,7 +262,10 @@ var BlockBuilder = {
     //==================
     
     BlockBuilder.canvas = canvas;
-    BlockBuilder.scene = scene;
+    BlockBuilder.render = render;
+    
+    BlockBuilder.world = new BlockBuilder.Union();
+    scene.add(BlockBuilder.world);
     
     BlockBuilder.currentMode = null;
     
@@ -253,12 +311,11 @@ var BlockBuilder = {
         }
     };
     
-    //BlockBuilder 월드
-    BlockBuilder.world.blockList = [];
-    BlockBuilder.world.render = render;
+    //유틸리티 함수 추가
+    //================
     
     //마우스 이벤트에서 RayCaster 가져오는 함수
-    BlockBuilder.world.getMouseRaycaster = function (event) {
+    BlockBuilder.util.getMouseRaycaster = function (event) {
         var mouse3D, raycaster;
         
         mouse3D = new THREE.Vector3(
