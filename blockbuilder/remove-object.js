@@ -9,13 +9,9 @@
     
     function resetPrevInstersect() {
         if (prevIntersectUnit !== null) {
-            prevIntersectUnit.hideGuideEdge();
-            prevIntersectUnit.material.setValues({ transparent: false });
+            prevIntersectUnit.hideGuideBox();
+            prevIntersectUnit.setOpacity(1.0);
         }
-    }
-    
-    function setTransparent(object) {
-        object.material.setValues({ transparent: true, opacity: 0.5 });
     }
     
     function onCanvasMouseMove(event) {
@@ -23,15 +19,15 @@
 
         raycaster = BlockBuilder.util.getMouseRaycaster(event);
         
-        intersects = raycaster.intersectObjects(BlockBuilder.world.blockList);
+        intersects = raycaster.intersectObjects(BlockBuilder.world.objectList);
         
         resetPrevInstersect();
         if (intersects.length > 0) {
             intersect = intersects[0];
             
-            intersect.object.showGuideEdge(BLOCK_DESTRUCTION_OUTLINE_COLOR);
+            intersect.object.showGuideBox(BLOCK_DESTRUCTION_OUTLINE_COLOR);
             
-            setTransparent(intersect.object);
+            intersect.object.setOpacity(0.5);
             prevIntersectUnit = intersect.object;
         }
         
@@ -44,14 +40,14 @@
         if (event.detail.button === 0) {
             raycaster = BlockBuilder.util.getMouseRaycaster(event.detail);
             
-            intersects = raycaster.intersectObjects(BlockBuilder.world.blockList);
+            intersects = raycaster.intersectObjects(BlockBuilder.world.objectList);
             
             if (intersects.length > 0) {
                 resetPrevInstersect();
                 
                 intersect = intersects[0];
                 
-                BlockBuilder.world.removeBlock(intersect.object);
+                BlockBuilder.world.remove(intersect.object);
             }
         }
     }

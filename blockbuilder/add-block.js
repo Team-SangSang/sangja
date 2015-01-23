@@ -6,7 +6,7 @@
     //가이드 블록 생성 처리
     var guideBlock = new BlockBuilder.Block({ color: BlockBuilder.currentBlockColor, transparent: true, opacity: 0.5 });
     guideBlock.visible = false;
-    BlockBuilder.world.add(guideBlock);
+    BlockBuilder.world.add(guideBlock, false);
     
     //교차점으로부터 다음 블록 위치를 결정하는 함수
     function getVoxelPosition(intersect) {
