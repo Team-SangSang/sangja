@@ -44,18 +44,23 @@ var BlockBuilder = {
     //외곽선 관련 메서드
     THREE.Object3D.prototype.showGuideBox = function (color) {
         if (this.guideBox === undefined) {
-            this.guideBox = new THREE.BoundingBoxHelper(this, color);
+            this.guideBox = new THREE.BoundingBoxHelper(this);
+            this.guideEdge = new THREE.BoxHelper();
+            
+            this.guideBox.visible = false;
             this.parent.add(this.guideBox);
-        } else {
-            this.guideBox.material.setValues({ color: color });
+            this.parent.add(this.guideEdge);
         }
-        this.guideBox.visible = true;
+        this.guideEdge.material.setValues({ color: color });
+        this.guideEdge.visible = true;
+        
         this.guideBox.update();
+        this.guideEdge.update(this.guideBox);
     };
 
     THREE.Object3D.prototype.hideGuideBox = function () {
-        if (this.guideBox !== undefined) {
-            this.guideBox.visible = false;
+        if (this.guideEdge !== undefined) {
+            this.guideEdge.visible = false;
         }
     };
     
