@@ -22,9 +22,9 @@
         raycaster = BlockBuilder.util.getMouseRaycaster(event);
         
         //addBox 모드에서는 가상 평면 추가
-        BlockBuilder.world.blockList.push(BlockBuilder.plane);
-        intersects = raycaster.intersectObjects(BlockBuilder.world.blockList);
-        BlockBuilder.world.blockList.pop();
+        BlockBuilder.world.objectList.push(BlockBuilder.plane);
+        intersects = raycaster.intersectObjects(BlockBuilder.world.objectList, true);
+        BlockBuilder.world.objectList.pop();
         
         if (intersects.length > 0) {
             guideBlock.visible = true;
@@ -46,9 +46,9 @@
             raycaster = BlockBuilder.util.getMouseRaycaster(event.detail);
             
             //addBox 모드에서는 가상 평면 추가
-            BlockBuilder.world.blockList.push(BlockBuilder.plane);
-            intersects = raycaster.intersectObjects(BlockBuilder.world.blockList);
-            BlockBuilder.world.blockList.pop();
+            BlockBuilder.world.objectList.push(BlockBuilder.plane);
+            intersects = raycaster.intersectObjects(BlockBuilder.world.objectList, true);
+            BlockBuilder.world.objectList.pop();
             
             if (intersects.length > 0) {
                 intersect = intersects[0];

@@ -19,16 +19,16 @@
 
         raycaster = BlockBuilder.util.getMouseRaycaster(event);
         
-        intersects = raycaster.intersectObjects(BlockBuilder.world.objectList);
+        intersects = raycaster.intersectObjects(BlockBuilder.world.objectList, true);
         
         resetPrevInstersect();
         if (intersects.length > 0) {
-            intersect = intersects[0];
+            intersect = intersects[0].object.ascendTo(BlockBuilder.world);
             
-            intersect.object.showGuideBox(BLOCK_DESTRUCTION_OUTLINE_COLOR);
+            intersect.showGuideBox(BLOCK_DESTRUCTION_OUTLINE_COLOR);
             
-            intersect.object.setOpacity(0.5);
-            prevIntersectUnit = intersect.object;
+            intersect.setOpacity(0.5);
+            prevIntersectUnit = intersect;
         }
         
         BlockBuilder.render();
@@ -40,14 +40,14 @@
         if (event.detail.button === 0) {
             raycaster = BlockBuilder.util.getMouseRaycaster(event.detail);
             
-            intersects = raycaster.intersectObjects(BlockBuilder.world.objectList);
+            intersects = raycaster.intersectObjects(BlockBuilder.world.objectList, true);
             
             if (intersects.length > 0) {
                 resetPrevInstersect();
                 
-                intersect = intersects[0];
+                intersect = intersects[0].object.ascendTo(BlockBuilder.world);
                 
-                BlockBuilder.world.remove(intersect.object);
+                BlockBuilder.world.remove(intersect);
             }
         }
     }
