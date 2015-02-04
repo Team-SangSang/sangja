@@ -13,7 +13,11 @@ var SANGJA = {};
     SANGJA.core = {
         //Class
         Block: undefined,
-        Union: undefined
+        Union: undefined,
+        
+        //Method
+        voxelToThree: undefined,
+        threeToVoxel: undefined
     };
     
     //기존 클래스에 메서드 추가
@@ -109,14 +113,6 @@ var SANGJA = {};
         Union.prototype = Object.create(THREE.Object3D.prototype);
         Union.prototype.constructor = Union;
         
-        //복셀 정수 좌표를 실제 THREE.js 좌표로 변환
-        Union.prototype.convertVoxelPosition = function (vector) {
-            var result = new THREE.Vector3().copy(vector);
-            result.multiplyScalar(SANGJA.core.Block.SIZE).addScalar(SANGJA.core.Block.SIZE * 0.5);
-            
-            return result;
-        };
-        
         Union.prototype.add = function (target, interactable) {
             interactable = interactable === undefined ? true : interactable;
             
@@ -152,7 +148,7 @@ var SANGJA = {};
         Union.prototype.createBlock = function (vector, setting) {
             var block = new SANGJA.core.Block(setting);
             
-            block.position.copy(this.convertVoxelPosition(vector));
+            block.position.copy(SANGJA.core.voxelToThree(vector));
             
             this.add(block);
         };
@@ -191,4 +187,21 @@ var SANGJA = {};
         
         return Union;
     }());
+    
+    //메서드 구현
+    //==========
+    
+    SANGJA.core.voxelToThree = function (vector) {
+        var result = new THREE.Vector3().copy(vector);
+        result.multiplyScalar(SANGJA.core.Block.SIZE).addScalar(SANGJA.core.Block.SIZE * 0.5);
+
+        return result;
+    };
+    
+    SANGJA.core.threeToVoxel = function (vector) {
+        var result = new THREE.Vector3().copy(vector);
+        result.addScalar(-SANGJA.core.Block.SIZE * 0.5).divideScalar(SANGJA.core.Block.SIZE);
+        
+        return result;
+    };
 }());

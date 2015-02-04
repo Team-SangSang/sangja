@@ -36,7 +36,7 @@
             intersect = intersects[0];
             
             guideBlock.material.setValues({ color: SANGJA.builder.currentBlockColor });
-            guideBlock.position.copy(SANGJA.builder.world.convertVoxelPosition(getVoxelPosition(intersect)));
+            guideBlock.position.copy(SANGJA.core.voxelToThree(getVoxelPosition(intersect)));
         } else {
             guideBlock.visible = false;
         }
