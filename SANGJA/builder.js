@@ -31,6 +31,7 @@
         EXPORT_SCENE_ID = 'tool-export-scene',
         IMPORT_SCENE_ID = 'tool-import-scene',
         IMPORT_UNION_ID = 'tool-import-union',
+        RUN_PLAYER_ID = 'run-player',
         
         helperPlane,
         helperGuide,
@@ -189,5 +190,13 @@
     $('#' + IMPORT_UNION_ID).change(function () {
         unionImporter.readAsText(this.files[0]);
         $(this).val('');
+    });
+    
+    //플레이어 실행
+    //===========
+    
+    $('#' + RUN_PLAYER_ID).click(function () {
+        sessionStorage.world = SANGJA.parser.unionToJson(SANGJA.builder.world);
+        window.location.href = 'player.html';
     });
 }());

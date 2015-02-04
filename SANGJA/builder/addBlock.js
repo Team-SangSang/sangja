@@ -11,7 +11,7 @@
     //가이드 블록 생성 처리
     var guideBlock = new SANGJA.core.Block({ color: SANGJA.builder.currentBlockColor, transparent: true, opacity: 0.5 });
     guideBlock.visible = false;
-    SANGJA.renderer.scene.add(guideBlock, false);
+    SANGJA.renderer.scene.add(guideBlock);
     
     function onCanvasMouseMove(event) {
         var raycaster, intersects, intersect;
