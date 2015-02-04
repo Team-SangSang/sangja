@@ -102,7 +102,7 @@
     }
     
     //d키
-    SANGJA.builder.addMode('선택', 68, {
+    SANGJA.builder.addMode('Select', 68, {
         id: 'select',
         activate: function () {
             SANGJA.renderer.canvas.addEventListener('clickWithoutMove', onCanvasClickWithoutMove);

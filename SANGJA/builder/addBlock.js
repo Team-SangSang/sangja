@@ -70,7 +70,7 @@
     //TODO: 기준 평면 아래(z 좌표 음수) 처리하기
     
     //a키
-    SANGJA.builder.addMode('추가', 65, {
+    SANGJA.builder.addMode('Add', 65, {
         id: 'add',
         activate: function () {
             SANGJA.renderer.canvas.addEventListener('mousemove', onCanvasMouseMove);

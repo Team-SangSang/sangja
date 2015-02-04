@@ -53,7 +53,7 @@
     }
     
     //s키
-    SANGJA.builder.addMode('삭제', 83, {
+    SANGJA.builder.addMode('Erase', 83, {
         id: 'remove',
         activate: function () {
             SANGJA.renderer.canvas.addEventListener('mousemove', onCanvasMouseMove);
