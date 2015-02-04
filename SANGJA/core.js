@@ -183,7 +183,47 @@ var SANGJA = {};
             }
         };
         
-        //TODO clone 구현
+        //Block들을 전부 순회
+        Union.prototype.traverseBlock = function (callback, recursive) {
+            var i, next;
+            
+            if (recursive === undefined) {
+                recursive = true;
+            }
+            
+            for (i = 0; i < this.blockList.length; i += 1) {
+                next = this.blockList[i];
+                callback(next);
+            }
+            
+            if (recursive) {
+                for (i = 0; i < this.unionList.length; i += 1) {
+                    next = this.unionList[i];
+                    next.traverseBlock(callback, recursive);
+                }
+            }
+        };
+        
+        //좌표 관련 함수들
+        Union.prototype.move = function (x, y, z) {
+            var vector;
+            
+            if (x instanceof THREE.Vector3) {
+                vector = x;
+            } else {
+                vector = new THREE.Vector3(x, y, z);
+            }
+            
+            vector.multiplyScalar(SANGJA.core.Block.SIZE);
+            this.traverseBlock(function (block) {
+                block.position.add(vector);
+            });
+        };
+        
+        Union.prototype.clone = function () {
+            var json = SANGJA.parser.unionToJson(this);
+            return SANGJA.parser.jsonToUnion(json);
+        };
         
         return Union;
     }());

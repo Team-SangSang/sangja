@@ -19,6 +19,7 @@
         //Method
         addMode: undefined,
         updateHierarchy: undefined,
+        getVoxelPosition: undefined,
         download: undefined
     };
     
@@ -131,6 +132,16 @@
     };
     
     SANGJA.builder.updateHierarchy();
+    
+    
+    
+    //교차점으로부터 다음 블록 위치를 결정하는 함수
+    SANGJA.builder.getVoxelPosition = function (intersect) {
+        var vector = new THREE.Vector3();
+        vector.copy(intersect.point).add(intersect.face.normal);
+        vector.divideScalar(SANGJA.core.Block.SIZE).floor();
+        return vector;
+    };
     
     //Import / Export 관련
     //====================

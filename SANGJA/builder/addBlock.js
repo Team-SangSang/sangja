@@ -11,15 +11,7 @@
     //가이드 블록 생성 처리
     var guideBlock = new SANGJA.core.Block({ color: SANGJA.builder.currentBlockColor, transparent: true, opacity: 0.5 });
     guideBlock.visible = false;
-    SANGJA.builder.world.add(guideBlock, false);
-    
-    //교차점으로부터 다음 블록 위치를 결정하는 함수
-    function getVoxelPosition(intersect) {
-        var vector = new THREE.Vector3();
-        vector.copy(intersect.point).add(intersect.face.normal);
-        vector.divideScalar(SANGJA.core.Block.SIZE).floor();
-        return vector;
-    }
+    SANGJA.renderer.scene.add(guideBlock, false);
     
     function onCanvasMouseMove(event) {
         var raycaster, intersects, intersect;
@@ -36,7 +28,7 @@
             intersect = intersects[0];
             
             guideBlock.material.setValues({ color: SANGJA.builder.currentBlockColor });
-            guideBlock.position.copy(SANGJA.core.voxelToThree(getVoxelPosition(intersect)));
+            guideBlock.position.copy(SANGJA.core.voxelToThree(SANGJA.builder.getVoxelPosition(intersect)));
         } else {
             guideBlock.visible = false;
         }
@@ -58,7 +50,7 @@
             if (intersects.length > 0) {
                 intersect = intersects[0];
                 
-                vector = getVoxelPosition(intersect);
+                vector = SANGJA.builder.getVoxelPosition(intersect);
                 
                 SANGJA.builder.world.createBlock(vector, { color: SANGJA.builder.currentBlockColor });
             }
