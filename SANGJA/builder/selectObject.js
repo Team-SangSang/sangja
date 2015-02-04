@@ -10,6 +10,7 @@
         SELECT_UNION_ID = 'select-union',
         UNION_BUTTON_ID = 'select-create-union',
         UNION_NAME_INPUT = 'select-union-name',
+        EXPORT_UNION_ID = 'select-export-union',
         
         selectedObjects = [];
     
@@ -126,5 +127,19 @@
         });
         
         $('#' + UNION_NAME_INPUT).on('input', inputUnionName).closest('form').submit(false);
+        
+        $('#' + EXPORT_UNION_ID).click(function () {
+            var target, fileName;
+            
+            target = selectedObjects[0];
+            
+            if (target.name && target.name !== '') {
+                fileName = target.name;
+            } else {
+                fileName = 'unnamed';
+            }
+            
+            SANGJA.parser.download(SANGJA.parser.unionToJson(target), fileName + '.union', 'text/plain');
+        });
     });
 }());

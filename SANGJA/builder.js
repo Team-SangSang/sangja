@@ -3,7 +3,7 @@
 * builder module
 **************************************/
 
-/*global $, THREE, SANGJA*/
+/*global $, THREE, FileReader, SANGJA*/
 
 
 (function () {
@@ -18,7 +18,8 @@
         
         //Method
         addMode: undefined,
-        updateHierarchy: undefined
+        updateHierarchy: undefined,
+        download: undefined
     };
     
     //초기화 시작
@@ -26,8 +27,14 @@
     
     var GRID_COUNT = 15,
         
+        EXPORT_SCENE_ID = 'tool-export-scene',
+        IMPORT_SCENE_ID = 'tool-import-scene',
+        IMPORT_UNION_ID = 'tool-import-union',
+        
         helperPlane,
-        helperGuide;
+        helperGuide,
+        sceneImporter,
+        unionImporter;
     
     //편집 중인 새로운 월드 추가
     SANGJA.builder.world.name = 'World';
@@ -89,7 +96,7 @@
         document.addEventListener('keydown', function (event) {
             var activeObj = document.activeElement;
             
-            if (event.keyCode === key && (activeObj === null || activeObj.tagName === 'BODY')) {
+            if (event.keyCode === key && (activeObj === null || activeObj.getAttribute('type') !== 'text')) {
                 toolButton.click();
             }
         });
@@ -124,4 +131,52 @@
     };
     
     SANGJA.builder.updateHierarchy();
+    
+    //Import / Export 관련
+    //====================
+    
+    sceneImporter = new FileReader();
+    
+    sceneImporter.onload = function (e) {
+        var str, world;
+        
+        str = e.target.result;
+        
+        world = SANGJA.parser.jsonToUnion(str);
+        
+        SANGJA.renderer.scene.remove(SANGJA.builder.world);
+        SANGJA.builder.world = world;
+        SANGJA.renderer.scene.add(world);
+        
+        SANGJA.renderer.render();
+        SANGJA.builder.updateHierarchy();
+    };
+    
+    unionImporter = new FileReader();
+    
+    unionImporter.onload = function (e) {
+        var str, union;
+        
+        str = e.target.result;
+        union = SANGJA.parser.jsonToUnion(str);
+        
+        SANGJA.builder.world.add(union);
+        
+        SANGJA.renderer.render();
+        SANGJA.builder.updateHierarchy();
+    };
+    
+    $('#' + EXPORT_SCENE_ID).click(function () {
+        SANGJA.parser.download(SANGJA.parser.unionToJson(SANGJA.builder.world), 'scene.world', 'text/plain');
+    });
+    
+    $('#' + IMPORT_SCENE_ID).change(function () {
+        sceneImporter.readAsText(this.files[0]);
+        $(this).val('');
+    });
+    
+    $('#' + IMPORT_UNION_ID).change(function () {
+        unionImporter.readAsText(this.files[0]);
+        $(this).val('');
+    });
 }());
