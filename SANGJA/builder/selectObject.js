@@ -38,6 +38,8 @@
     
     function inputUnionName() {
         selectedObjects[0].name = $('#' + UNION_NAME_INPUT).val();
+        
+        SANGJA.builder.updateHierarchy();
     }
     
     function deselectAll() {
@@ -119,8 +121,10 @@
             deselectAll();
             displayMenu();
             SANGJA.renderer.render();
+        
+            SANGJA.builder.updateHierarchy();
         });
         
-        $('#' + UNION_NAME_INPUT).on('input', inputUnionName);
+        $('#' + UNION_NAME_INPUT).on('input', inputUnionName).closest('form').submit(false);
     });
 }());

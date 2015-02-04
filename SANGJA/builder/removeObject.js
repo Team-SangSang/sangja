@@ -48,6 +48,8 @@
                 intersect = intersects[0].object.ascendTo(SANGJA.builder.world);
                 
                 SANGJA.builder.world.remove(intersect);
+                
+                SANGJA.builder.updateHierarchy();
             }
         }
     }

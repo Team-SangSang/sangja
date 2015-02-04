@@ -17,7 +17,8 @@
         helperPlane: undefined,
         
         //Method
-        addMode: undefined
+        addMode: undefined,
+        updateHierarchy: undefined
     };
     
     //초기화 시작
@@ -29,6 +30,7 @@
         helperGuide;
     
     //편집 중인 새로운 월드 추가
+    SANGJA.builder.world.name = 'World';
     SANGJA.renderer.scene.add(SANGJA.builder.world);
         
     //보조선
@@ -87,7 +89,7 @@
         document.addEventListener('keydown', function (event) {
             var activeObj = document.activeElement;
             
-            if (event.keyCode === key && (activeObj === null || activeObj.tagName === "BODY")) {
+            if (event.keyCode === key && (activeObj === null || activeObj.tagName === 'BODY')) {
                 toolButton.click();
             }
         });
@@ -97,4 +99,29 @@
             toolButton.click();
         }
     };
+    
+    function hierarchyHtml(union) {
+        var i, next, list = $('<ul>'), item = $('<li>');
+        
+        if (union.name && union.name !== '') {
+            item.text(union.name).addClass('named');
+        } else {
+            item.text('Unnamed').addClass('unnamed');
+        }
+        
+        for (i = 0; i < union.unionList.length; i += 1) {
+            next = union.unionList[i];
+            
+            list.append(hierarchyHtml(next));
+        }
+        item.append(list);
+        
+        return item;
+    }
+    
+    SANGJA.builder.updateHierarchy = function () {
+        $('#tool-hierarchy').html($('<ul>').addClass('tree').append(hierarchyHtml(SANGJA.builder.world)));
+    };
+    
+    SANGJA.builder.updateHierarchy();
 }());
