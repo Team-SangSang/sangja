@@ -1,4 +1,4 @@
-/*global $, THREE, BlockBuilder*/
+/*global $, THREE, SANGJA*/
 
 (function () {
     "use strict";
@@ -25,7 +25,7 @@
         if (selectedObjects.length === 0) {
             //아무것도 선택 안 됨
             selectNone.css('display', '');
-        } else if (selectedObjects.length === 1 && selectedObjects[0] instanceof BlockBuilder.Union) {
+        } else if (selectedObjects.length === 1 && selectedObjects[0] instanceof SANGJA.core.Union) {
             //유니온 하나 선택
             selectUnion.css('display', '');
             unionNameInput.val(selectedObjects[0].name);
@@ -57,7 +57,7 @@
         blockIndex = selectedObjects.indexOf(object);
         
         if (blockIndex === -1) {
-            object.showGuideBox(object instanceof BlockBuilder.Block ? SELECTION_BLOCK_OUTLINE : SELECTION_UNION_OUTLINE);
+            object.showGuideBox(object instanceof SANGJA.core.Block ? SELECTION_BLOCK_OUTLINE : SELECTION_UNION_OUTLINE);
             object.setOpacity(0.8);
             
             selectedObjects.push(object);
@@ -73,16 +73,16 @@
         var raycaster, intersects, intersect;
         
         if (event.detail.button === 0) {
-            raycaster = BlockBuilder.util.getMouseRaycaster(event.detail);
+            raycaster = SANGJA.renderer.getMouseRaycaster(event.detail);
             
-            intersects = raycaster.intersectObjects(BlockBuilder.world.objectList, true);
+            intersects = raycaster.intersectObjects(SANGJA.builder.world.objectList, true);
             
             if (event.detail.shiftKey) {
                 //shift키 클릭중
                 if (intersects.length > 0) {
                     intersect = intersects[0];
                     
-                    toggleSelection(intersect.object.ascendTo(BlockBuilder.world));
+                    toggleSelection(intersect.object.ascendTo(SANGJA.builder.world));
                 }
             } else {
                 //shift키 클릭중 아님
@@ -91,34 +91,34 @@
                 if (intersects.length > 0) {
                     intersect = intersects[0];
                     
-                    toggleSelection(intersect.object.ascendTo(BlockBuilder.world));
+                    toggleSelection(intersect.object.ascendTo(SANGJA.builder.world));
                 }
             }
         }
         
         displayMenu();
         
-        BlockBuilder.render();
+        SANGJA.renderer.render();
     }
     
     //d키
-    BlockBuilder.addMode('선택', 68, {
+    SANGJA.builder.addMode('선택', 68, {
         id: 'select',
         activate: function () {
-            BlockBuilder.canvas.addEventListener('clickWithoutMove', onCanvasClickWithoutMove);
+            SANGJA.renderer.canvas.addEventListener('clickWithoutMove', onCanvasClickWithoutMove);
             displayMenu();
         },
         deactivate: function () {
-            BlockBuilder.canvas.removeEventListener('clickWithoutMove', onCanvasClickWithoutMove);
+            SANGJA.renderer.canvas.removeEventListener('clickWithoutMove', onCanvasClickWithoutMove);
             deselectAll();
-            BlockBuilder.render();
+            SANGJA.renderer.render();
         }
-    }, '/blockbuilder/select-object.html', function () {
+    }, '/SANGJA/builder/selectObject.html', function () {
         $('#' + UNION_BUTTON_ID).click(function () {
-            BlockBuilder.world.createUnion(selectedObjects);
+            SANGJA.builder.world.createUnion(selectedObjects);
             deselectAll();
             displayMenu();
-            BlockBuilder.render();
+            SANGJA.renderer.render();
         });
         
         $('#' + UNION_NAME_INPUT).on('input', inputUnionName);
