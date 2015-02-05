@@ -8,6 +8,8 @@
         SELECT_NONE_ID = 'select-none',
         SELECTED_ID = 'select-selected',
         SELECT_UNION_ID = 'select-union',
+        
+        SELECT_ALL_ID = 'select-all',
         UNION_BUTTON_ID = 'select-create-union',
         UNION_NAME_INPUT = 'select-union-name',
         EXPORT_UNION_ID = 'select-export-union',
@@ -124,6 +126,16 @@
             SANGJA.renderer.render();
         
             SANGJA.builder.updateHierarchy();
+        });
+        
+        $('#' + SELECT_ALL_ID).click(function () {
+            deselectAll();
+            SANGJA.builder.world.traverseBlock(function (block) {
+                toggleSelection(block);
+            }, false);
+            
+            displayMenu();
+            SANGJA.renderer.render();
         });
         
         $('#' + UNION_NAME_INPUT).on('input', inputUnionName).closest('form').submit(false);
