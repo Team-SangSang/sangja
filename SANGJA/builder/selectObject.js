@@ -106,15 +106,36 @@
         SANGJA.renderer.render();
     }
     
+    function keydownHandler(event) {
+        var i, obj;
+        
+        //delete key
+        if (event.keyCode === 46) {
+            if (window.confirm("Delete all selected objects?")) {
+                for (i = 0; i < selectedObjects.length; i += 1) {
+                    obj = selectedObjects[i];
+                    obj.parent.remove(obj);
+                }
+                
+                deselectAll();
+                
+                displayMenu();
+                SANGJA.renderer.render();
+            }
+        }
+    }
+    
     //d키
     SANGJA.builder.addMode('Select', 68, {
         id: 'select',
         activate: function () {
             SANGJA.renderer.canvas.addEventListener('clickWithoutMove', onCanvasClickWithoutMove);
+            document.addEventListener('keydown', keydownHandler);
             displayMenu();
         },
         deactivate: function () {
             SANGJA.renderer.canvas.removeEventListener('clickWithoutMove', onCanvasClickWithoutMove);
+            document.removeEventListener('keydown', keydownHandler);
             deselectAll();
             SANGJA.renderer.render();
         }

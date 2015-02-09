@@ -240,7 +240,7 @@ var SANGJA = {};
     
     SANGJA.core.threeToVoxel = function (vector) {
         var result = new THREE.Vector3().copy(vector);
-        result.addScalar(-SANGJA.core.Block.SIZE * 0.5).divideScalar(SANGJA.core.Block.SIZE);
+        result.addScalar(-SANGJA.core.Block.SIZE * 0.5).divideScalar(SANGJA.core.Block.SIZE).round();
         
         return result;
     };

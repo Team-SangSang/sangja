@@ -46,8 +46,7 @@
                 resetPrevInstersect();
                 
                 intersect = intersects[0].object.ascendTo(SANGJA.builder.world);
-                
-                SANGJA.builder.world.remove(intersect);
+                intersect.parent.remove(intersect);
                 
                 SANGJA.builder.updateHierarchy();
             }
