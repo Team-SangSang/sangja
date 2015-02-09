@@ -1,6 +1,6 @@
 /*************************************
 * SANGJA PROJECT
-* builder module
+* player module
 **************************************/
 
 /*global $, THREE, SANGJA*/
