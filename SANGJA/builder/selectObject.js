@@ -159,7 +159,8 @@
             SANGJA.renderer.render();
         });
         
-        $('#' + UNION_NAME_INPUT).on('input', inputUnionName).closest('form').submit(false);
+        //prevent form submission
+        $('#select-union-form').submit(false);
         
         $('#' + EXPORT_UNION_ID).click(function () {
             var target, fileName;

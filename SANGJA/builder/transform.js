@@ -3,7 +3,10 @@
 (function () {
     "use strict";
     
-    var selected;
+    var SELECT_NONE_ID = 'transform-none',
+        SELECTED_ID = 'transform-selected',
+        
+        selected;
     
     function blurBlocks(val) {
         var i, block;
@@ -18,6 +21,19 @@
             selected.setOpacity(1.0);
             selected.ascendTo(SANGJA.builder.world).hideGuideBox();
             selected = undefined;
+        }
+    }
+    
+    function displayMenu() {
+        var selectNone = $('#' + SELECT_NONE_ID),
+            selectUnion = $('#' + SELECTED_ID);
+        
+        $('#toolmenu-transform > div').css('display', 'none');
+        
+        if (selected) {
+            selectUnion.css('display', '');
+        } else {
+            selectNone.css('display', '');
         }
     }
     
@@ -66,15 +82,17 @@
             resetSelection();
         }
         
+        displayMenu();
         SANGJA.renderer.render();
     }
     
     //f키
-    SANGJA.builder.addMode('Teleport', 70, {
-        id: 'teleport',
+    SANGJA.builder.addMode('Transform', 70, {
+        id: 'transform',
         activate: function () {
             blurBlocks(true);
             SANGJA.renderer.canvas.addEventListener('clickWithoutMove', onCanvasClickWithoutMove);
+            displayMenu();
             SANGJA.renderer.render();
         },
         deactivate: function () {
@@ -83,5 +101,37 @@
             SANGJA.renderer.canvas.removeEventListener('clickWithoutMove', onCanvasClickWithoutMove);
             SANGJA.renderer.render();
         }
+    }, '/SANGJA/builder/transform.html', function () {
+        $('#transform-selected-form').submit(false);
+        
+        $('#transform-move-x-plus').click(function () {
+            selected.ascendTo(SANGJA.builder.world).move(1, 0, 0);
+            SANGJA.renderer.render();
+        });
+        
+        $('#transform-move-x-minus').click(function () {
+            selected.ascendTo(SANGJA.builder.world).move(-1, 0, 0);
+            SANGJA.renderer.render();
+        });
+        
+        $('#transform-move-y-plus').click(function () {
+            selected.ascendTo(SANGJA.builder.world).move(0, 1, 0);
+            SANGJA.renderer.render();
+        });
+        
+        $('#transform-move-y-minus').click(function () {
+            selected.ascendTo(SANGJA.builder.world).move(0, -1, 0);
+            SANGJA.renderer.render();
+        });
+        
+        $('#transform-move-z-plus').click(function () {
+            selected.ascendTo(SANGJA.builder.world).move(0, 0, 1);
+            SANGJA.renderer.render();
+        });
+        
+        $('#transform-move-z-minus').click(function () {
+            selected.ascendTo(SANGJA.builder.world).move(0, 0, -1);
+            SANGJA.renderer.render();
+        });
     });
 }());

@@ -44,6 +44,13 @@ var SANGJA = {};
     };
     
     //외곽선 관련 메서드
+    THREE.Object3D.prototype.updateGuideBox = function () {
+        if (this.guideBox) {
+            this.guideBox.update();
+            this.guideEdge.update(this.guideBox);
+        }
+    };
+    
     THREE.Object3D.prototype.showGuideBox = function (color) {
         if (this.guideBox === undefined) {
             this.guideBox = new THREE.BoundingBoxHelper(this);
@@ -56,8 +63,7 @@ var SANGJA = {};
         this.guideEdge.material.setValues({ color: color });
         this.guideEdge.visible = true;
         
-        this.guideBox.update();
-        this.guideEdge.update(this.guideBox);
+        this.updateGuideBox();
     };
 
     THREE.Object3D.prototype.hideGuideBox = function () {
@@ -218,6 +224,8 @@ var SANGJA = {};
             this.traverseBlock(function (block) {
                 block.position.add(vector);
             });
+            
+            this.updateGuideBox();
         };
         
         Union.prototype.clone = function () {
