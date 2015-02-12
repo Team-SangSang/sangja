@@ -18,7 +18,7 @@ var SANGJA = {};
         //Method
         voxelToThree: undefined,
         threeToVoxel: undefined,
-        relativeRotation: undefined
+        relativeLinearTransform: undefined
     };
     
     //기존 클래스에 메서드 추가
