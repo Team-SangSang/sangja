@@ -1,0 +1,3 @@
+[submodule "vox2union"]
+	path = vox2union
+	url = git://github.com/Team-SangSang/vox2union.git

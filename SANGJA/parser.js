@@ -3,7 +3,7 @@
 * parser module
 **************************************/
 
-/*global $, THREE, Blob, SANGJA*/
+/*global $, THREE, parseVoxFile, vox2union, FileReader, Blob, SANGJA*/
 
 (function () {
     "use strict";
@@ -12,7 +12,8 @@
         //Method
         unionToJson: undefined,
         jsonToUnion: undefined,
-        download: undefined
+        download: undefined,
+        importFromFile: undefined
     };
     
     //초기화 시작
@@ -88,5 +89,44 @@
         a.href = window.URL.createObjectURL(blob);
         a.download = filename;
         a.click();
+    };
+    
+    SANGJA.parser.importFromFile = function (file) {
+        var assetReader = new FileReader(),
+            extension = file.name.split('.').pop().toLowerCase();
+        
+        if (extension === 'vox') {
+            assetReader.readAsArrayBuffer(file);
+        } else {
+            assetReader.readAsText(file);
+        }
+        
+        assetReader.onload = (function (file, extension) {
+            return function (e) {
+                var index, vox, asset;
+                
+                if (extension === 'vox') {
+                    index = file.name.lastIndexOf('.');
+                    vox = parseVoxFile(e.target.result);
+                    asset = parseObject(vox2union(vox, file.name.substring(0, index), {
+                        fixCoord: true,
+                        centerXZ: true,
+                        centery: false
+                    }));
+                    SANGJA.builder.world.add(asset);
+                } else if (extension === 'world') {
+                    asset = SANGJA.parser.jsonToUnion(e.target.result);
+                    SANGJA.renderer.scene.remove(SANGJA.builder.world);
+                    SANGJA.builder.world = asset;
+                    SANGJA.renderer.scene.add(asset);
+                } else if (extension === 'union') {
+                    asset = SANGJA.parser.jsonToUnion(e.target.result);
+                    SANGJA.builder.world.add(asset);
+                }
+                
+                SANGJA.renderer.render();
+                SANGJA.builder.updateHierarchy();
+            };
+        }(file, extension));
     };
 }());

@@ -3,7 +3,7 @@
 * builder module
 **************************************/
 
-/*global $, THREE, FileReader, SANGJA*/
+/*global $, THREE, SANGJA*/
 
 
 (function () {
@@ -29,14 +29,11 @@
     var GRID_COUNT = 15,
         
         EXPORT_SCENE_ID = 'tool-export-scene',
-        IMPORT_SCENE_ID = 'tool-import-scene',
-        IMPORT_UNION_ID = 'tool-import-union',
+        IMPORT_ID = 'tool-import',
         RUN_PLAYER_ID = 'run-player',
         
         helperPlane,
-        helperGuide,
-        sceneImporter,
-        unionImporter;
+        helperGuide;
     
     //편집 중인 새로운 월드 추가
     SANGJA.builder.world.name = 'World';
@@ -147,48 +144,12 @@
     //Import / Export 관련
     //====================
     
-    sceneImporter = new FileReader();
-    
-    sceneImporter.onload = function (e) {
-        var str, world;
-        
-        str = e.target.result;
-        
-        world = SANGJA.parser.jsonToUnion(str);
-        
-        SANGJA.renderer.scene.remove(SANGJA.builder.world);
-        SANGJA.builder.world = world;
-        SANGJA.renderer.scene.add(world);
-        
-        SANGJA.renderer.render();
-        SANGJA.builder.updateHierarchy();
-    };
-    
-    unionImporter = new FileReader();
-    
-    unionImporter.onload = function (e) {
-        var str, union;
-        
-        str = e.target.result;
-        union = SANGJA.parser.jsonToUnion(str);
-        
-        SANGJA.builder.world.add(union);
-        
-        SANGJA.renderer.render();
-        SANGJA.builder.updateHierarchy();
-    };
-    
     $('#' + EXPORT_SCENE_ID).click(function () {
         SANGJA.parser.download(SANGJA.parser.unionToJson(SANGJA.builder.world), 'scene.world', 'text/plain');
     });
     
-    $('#' + IMPORT_SCENE_ID).change(function () {
-        sceneImporter.readAsText(this.files[0]);
-        $(this).val('');
-    });
-    
-    $('#' + IMPORT_UNION_ID).change(function () {
-        unionImporter.readAsText(this.files[0]);
+    $('#' + IMPORT_ID).change(function () {
+        SANGJA.parser.importFromFile(this.files[0]);
         $(this).val('');
     });
     

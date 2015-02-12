@@ -40,8 +40,7 @@
                 <div class="panel-body">
                     <div id="tool-hierarchy"></div>
                     <button id="tool-export-scene" class="btn btn-default btn-block">Export Scene</button>
-                    <span class="btn btn-default btn-file btn-block">Import Scene<input id="tool-import-scene" type="file"></span>
-                    <span class="btn btn-info btn-file btn-block">Import Union<input id="tool-import-union" type="file"></span>
+                    <span class="btn btn-info btn-file btn-block">Import<input id="tool-import" type="file" accept=".vox,.world,.union"></span>
                 </div>
             </div>
             <button id="run-player" class="btn btn-success btn-block"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Run!</button>
@@ -70,6 +69,8 @@
             ]
         });
     </script>
+    
+    <script type="text/javascript" src="/vox2union/vox2union.js"></script>
     
     <script type="text/javascript" src="/SANGJA/core.js"></script>
     <script type="text/javascript" src="/SANGJA/renderer.js"></script>
