@@ -133,5 +133,56 @@
             selected.ascendTo(SANGJA.builder.world).move(0, 0, -1);
             SANGJA.renderer.render();
         });
+        
+        function rotateCenter(matrix) {
+            var target = selected.ascendTo(SANGJA.builder.world),
+                box = new THREE.Box3();
+
+            box.setFromObject(target);
+
+            SANGJA.core.relativeLinearTransform(
+                target,
+                box.center(),
+                matrix
+            );
+
+            SANGJA.renderer.render();
+        }
+        
+        $('#transform-rotate-x-cw').click(function () {
+            var matrix = new THREE.Matrix3();
+            matrix.set(1, 0, 0, 0, 0, 1, 0, -1, 0);
+            rotateCenter(matrix);
+        });
+        
+        $('#transform-rotate-x-ccw').click(function () {
+            var matrix = new THREE.Matrix3();
+            matrix.set(1, 0, 0, 0, 0, -1, 0, 1, 0);
+            rotateCenter(matrix);
+        });
+        
+        $('#transform-rotate-y-cw').click(function () {
+            var matrix = new THREE.Matrix3();
+            matrix.set(0, 0, -1, 0, 1, 0, 1, 0, 0);
+            rotateCenter(matrix);
+        });
+        
+        $('#transform-rotate-y-ccw').click(function () {
+            var matrix = new THREE.Matrix3();
+            matrix.set(0, 0, 1, 0, 1, 0, -1, 0, 0);
+            rotateCenter(matrix);
+        });
+        
+        $('#transform-rotate-z-cw').click(function () {
+            var matrix = new THREE.Matrix3();
+            matrix.set(0, 1, 0, -1, 0, 0, 0, 0, 1);
+            rotateCenter(matrix);
+        });
+        
+        $('#transform-rotate-z-ccw').click(function () {
+            var matrix = new THREE.Matrix3();
+            matrix.set(0, -1, 0, 1, 0, 0, 0, 0, 1);
+            rotateCenter(matrix);
+        });
     });
 }());

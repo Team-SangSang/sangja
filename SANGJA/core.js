@@ -17,7 +17,8 @@ var SANGJA = {};
         
         //Method
         voxelToThree: undefined,
-        threeToVoxel: undefined
+        threeToVoxel: undefined,
+        relativeRotation: undefined
     };
     
     //기존 클래스에 메서드 추가
@@ -251,5 +252,18 @@ var SANGJA = {};
         result.addScalar(-SANGJA.core.Block.SIZE * 0.5).divideScalar(SANGJA.core.Block.SIZE).round();
         
         return result;
+    };
+    
+    SANGJA.core.relativeLinearTransform = function (target, center, matrix) {
+        target.traverseBlock(function (block) {
+            var vector;
+            
+            vector = block.position;
+            vector.sub(center);
+            vector.applyMatrix3(matrix);
+            vector.add(center);
+        });
+        
+        target.updateGuideBox();
     };
 }());
