@@ -111,7 +111,7 @@
                     asset = parseObject(vox2union(vox, file.name.substring(0, index), {
                         fixCoord: true,
                         centerXZ: true,
-                        centery: false
+                        centerY: false
                     }));
                     SANGJA.builder.world.add(asset);
                 } else if (extension === 'world') {
