@@ -159,6 +159,8 @@
             SANGJA.renderer.render();
         });
         
+        $('#' + UNION_NAME_INPUT).on('input', inputUnionName);
+        
         //prevent form submission
         $('#select-union-form').submit(false);
         
