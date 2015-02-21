@@ -20,6 +20,7 @@
         if (selected) {
             selected.setOpacity(1.0);
             selected.ascendTo(SANGJA.builder.world).hideGuideBox();
+            selected.ascendTo(SANGJA.builder.world).hideGizmo();
             selected = undefined;
         }
     }
@@ -59,9 +60,9 @@
                     }
                     
                     vector = SANGJA.builder.getVoxelPosition(intersect);
-                    vector.sub(SANGJA.core.threeToVoxel(selected.position));
+                    vector.sub(SANGJA.core.threeToVoxel(selected.localToWorld(new THREE.Vector3())));
                     
-                    union.move(vector);
+                    union.position.add(SANGJA.core.voxelToThree(vector));
                     
                     resetSelection();
                 }
@@ -73,6 +74,7 @@
                     intersect = intersects[0];
                     
                     intersect.object.ascendTo(SANGJA.builder.world).showGuideBox(0x0000FF);
+                    intersect.object.ascendTo(SANGJA.builder.world).showGizmo();
                     selected = intersect.object;
                     
                     selected.setOpacity(0.7);
@@ -105,84 +107,74 @@
         $('#transform-selected-form').submit(false);
         
         $('#transform-move-x-plus').click(function () {
-            selected.ascendTo(SANGJA.builder.world).move(1, 0, 0);
+            selected.ascendTo(SANGJA.builder.world).position.x += SANGJA.core.Block.SIZE;
             SANGJA.renderer.render();
         });
         
         $('#transform-move-x-minus').click(function () {
-            selected.ascendTo(SANGJA.builder.world).move(-1, 0, 0);
+            selected.ascendTo(SANGJA.builder.world).position.x -= SANGJA.core.Block.SIZE;
             SANGJA.renderer.render();
         });
         
         $('#transform-move-y-plus').click(function () {
-            selected.ascendTo(SANGJA.builder.world).move(0, 1, 0);
+            selected.ascendTo(SANGJA.builder.world).position.y += SANGJA.core.Block.SIZE;
             SANGJA.renderer.render();
         });
         
         $('#transform-move-y-minus').click(function () {
-            selected.ascendTo(SANGJA.builder.world).move(0, -1, 0);
+            selected.ascendTo(SANGJA.builder.world).position.y -= SANGJA.core.Block.SIZE;
             SANGJA.renderer.render();
         });
         
         $('#transform-move-z-plus').click(function () {
-            selected.ascendTo(SANGJA.builder.world).move(0, 0, 1);
+            selected.ascendTo(SANGJA.builder.world).position.z += SANGJA.core.Block.SIZE;
             SANGJA.renderer.render();
         });
         
         $('#transform-move-z-minus').click(function () {
-            selected.ascendTo(SANGJA.builder.world).move(0, 0, -1);
+            selected.ascendTo(SANGJA.builder.world).position.z -= SANGJA.core.Block.SIZE;
             SANGJA.renderer.render();
         });
         
-        function rotateCenter(matrix) {
-            var target = selected.ascendTo(SANGJA.builder.world),
-                box = new THREE.Box3();
-
-            box.setFromObject(target);
-
-            SANGJA.core.relativeLinearTransform(
-                target,
-                box.center(),
-                matrix
-            );
-
+        function rotateTarget(matrix) {
+            selected.ascendTo(SANGJA.builder.world).relativeLinearTransform(matrix);
             SANGJA.renderer.render();
         }
         
         $('#transform-rotate-x-cw').click(function () {
             var matrix = new THREE.Matrix3();
             matrix.set(1, 0, 0, 0, 0, 1, 0, -1, 0);
-            rotateCenter(matrix);
+            rotateTarget(matrix);
         });
         
         $('#transform-rotate-x-ccw').click(function () {
             var matrix = new THREE.Matrix3();
             matrix.set(1, 0, 0, 0, 0, -1, 0, 1, 0);
-            rotateCenter(matrix);
+            rotateTarget(matrix);
         });
         
         $('#transform-rotate-y-cw').click(function () {
             var matrix = new THREE.Matrix3();
             matrix.set(0, 0, -1, 0, 1, 0, 1, 0, 0);
-            rotateCenter(matrix);
+            rotateTarget(matrix);
         });
         
         $('#transform-rotate-y-ccw').click(function () {
             var matrix = new THREE.Matrix3();
             matrix.set(0, 0, 1, 0, 1, 0, -1, 0, 0);
-            rotateCenter(matrix);
+            rotateTarget(matrix);
         });
         
         $('#transform-rotate-z-cw').click(function () {
             var matrix = new THREE.Matrix3();
             matrix.set(0, 1, 0, -1, 0, 0, 0, 0, 1);
-            rotateCenter(matrix);
+            rotateTarget(matrix);
         });
         
         $('#transform-rotate-z-ccw').click(function () {
             var matrix = new THREE.Matrix3();
             matrix.set(0, -1, 0, 1, 0, 0, 0, 0, 1);
-            rotateCenter(matrix);
+            rotateTarget(matrix);
         });
     });
 }());

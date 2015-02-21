@@ -22,6 +22,7 @@
     function parseUnion(union) {
         var i, next, position, result = {
             name: union.name || '',
+            position: [union.position.x, union.position.y, union.position.z],
             blockList: [],
             unionList: []
         };
@@ -51,6 +52,7 @@
         result = new SANGJA.core.Union();
         
         result.name = object.name;
+        result.position.set(object.position[0], object.position[1], object.position[2]);
         
         for (i = 0; i < object.blockList.length; i += 1) {
             next = object.blockList[i];

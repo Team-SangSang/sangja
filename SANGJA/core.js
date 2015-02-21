@@ -17,8 +17,7 @@ var SANGJA = {};
         
         //Method
         voxelToThree: undefined,
-        threeToVoxel: undefined,
-        relativeLinearTransform: undefined
+        threeToVoxel: undefined
     };
     
     //기존 클래스에 메서드 추가
@@ -46,19 +45,19 @@ var SANGJA = {};
     
     //외곽선 관련 메서드
     THREE.Object3D.prototype.updateGuideBox = function () {
-        if (this.guideBox) {
-            this.guideBox.update();
-            this.guideEdge.update(this.guideBox);
+        if (this.guideEdge) {
+            this.guideEdge.update({
+                geometry: {
+                    boundingBox: this.getBoundingBox()
+                },
+                matrixWorld: this.matrixWorld
+            });
         }
     };
     
     THREE.Object3D.prototype.showGuideBox = function (color) {
-        if (this.guideBox === undefined) {
-            this.guideBox = new THREE.BoundingBoxHelper(this);
+        if (this.guideEdge === undefined) {
             this.guideEdge = new THREE.BoxHelper();
-            
-            this.guideBox.visible = false;
-            this.parent.add(this.guideBox);
             this.parent.add(this.guideEdge);
         }
         this.guideEdge.material.setValues({ color: color });
@@ -68,11 +67,10 @@ var SANGJA = {};
     };
 
     THREE.Object3D.prototype.hideGuideBox = function () {
-        if (this.guideEdge !== undefined) {
+        if (this.guideEdge) {
             this.guideEdge.visible = false;
         }
     };
-    
     
     //커스텀 클래스 구현
     //===============
@@ -93,6 +91,7 @@ var SANGJA = {};
         Block.prototype.constructor = Block;
         
         blockGeometry = new THREE.BoxGeometry(Block.SIZE, Block.SIZE, Block.SIZE);
+        blockGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(Block.SIZE * 0.5, Block.SIZE * 0.5, Block.SIZE * 0.5));
         
         Block.prototype.setOpacity = function (opacity) {
             if (opacity === 1.0) {
@@ -100,6 +99,13 @@ var SANGJA = {};
             } else {
                 this.material.setValues({ transparent: true, opacity: opacity });
             }
+        };
+        
+        Block.prototype.getBoundingBox = function () {
+            if (this.geometry.boundingBox === null) {
+                this.geometry.computeBoundingBox();
+            }
+            return this.geometry.boundingBox.clone();
         };
         
         return Block;
@@ -161,7 +167,7 @@ var SANGJA = {};
         };
         
         Union.prototype.createUnion = function (array) {
-            var union, i;
+            var union, center, i;
             
             union = new SANGJA.core.Union();
             
@@ -179,6 +185,10 @@ var SANGJA = {};
             }
             
             this.add(union);
+            
+            center = union.getBoundingBox().center();
+            union.position.copy(center);
+            union.move(SANGJA.core.threeToVoxel(center.multiplyScalar(-1)));
         };
         
         Union.prototype.setOpacity = function (opacity) {
@@ -213,7 +223,7 @@ var SANGJA = {};
         
         //좌표 관련 함수들
         Union.prototype.move = function (x, y, z) {
-            var vector;
+            var vector, obj, i;
             
             if (x instanceof THREE.Vector3) {
                 vector = x;
@@ -222,13 +232,80 @@ var SANGJA = {};
             }
             
             vector.multiplyScalar(SANGJA.core.Block.SIZE);
-            this.traverseBlock(function (block) {
-                block.position.add(vector);
-            });
+            
+            for (i = 0; i < this.objectList.length; i += 1) {
+                obj = this.objectList[i];
+                obj.position.add(vector);
+            }
             
             this.updateGuideBox();
         };
         
+        Union.prototype.relativeLinearTransform = function (matrix) {
+            var vector, obj, i;
+            
+            for (i = 0; i < this.blockList.length; i += 1) {
+                obj = this.blockList[i];
+                vector = obj.position;
+                vector.addScalar(SANGJA.core.Block.SIZE * 0.5);
+                vector.applyMatrix3(matrix);
+                vector.addScalar(-SANGJA.core.Block.SIZE * 0.5);
+            }
+            
+            for (i = 0; i < this.unionList.length; i += 1) {
+                obj = this.unionList[i];
+                vector = obj.position;
+                vector.applyMatrix3(matrix);
+                obj.relativeLinearTransform(matrix);
+            }
+
+            this.updateGuideBox();
+            this.updateGizmo();
+        };
+        
+        Union.prototype.getBoundingBox = function () {
+            var vector, box, obj, i;
+            
+            for (i = 0; i < this.objectList.length; i += 1) {
+                obj = this.objectList[i];
+                box = box ? box.union(obj.getBoundingBox().translate(obj.position)) : obj.getBoundingBox().translate(obj.position);
+            }
+            
+            return box;
+        };
+        
+        //기즈모 관련 메서드
+        Union.prototype.updateGizmo = function () {
+            var box, geometry;
+
+            if (this.guideAxis) {
+                box = this.getBoundingBox();
+                geometry = this.guideAxis.geometry;
+
+                geometry.attributes.position.array[3] = box.max.x - box.min.x;
+                geometry.attributes.position.array[10] = box.max.y - box.min.y;
+                geometry.attributes.position.array[17] = box.max.z - box.min.z;
+                geometry.attributes.position.needsUpdate = true;
+            }
+        };
+
+        Union.prototype.showGizmo = function () {
+            if (this.guideAxis === undefined) {
+                this.guideAxis = new THREE.AxisHelper();
+                this.add(this.guideAxis);
+            }
+            
+            this.updateGizmo();
+            this.guideAxis.visible = true;
+        };
+        
+        Union.prototype.hideGizmo = function () {
+            if (this.guideAxis) {
+                this.guideAxis.visible = false;
+            }
+        };
+        
+        //기타 메서드
         Union.prototype.clone = function () {
             var json = SANGJA.parser.unionToJson(this);
             return SANGJA.parser.jsonToUnion(json);
@@ -242,28 +319,15 @@ var SANGJA = {};
     
     SANGJA.core.voxelToThree = function (vector) {
         var result = new THREE.Vector3().copy(vector);
-        result.multiplyScalar(SANGJA.core.Block.SIZE).addScalar(SANGJA.core.Block.SIZE * 0.5);
+        result.multiplyScalar(SANGJA.core.Block.SIZE);
 
         return result;
     };
     
     SANGJA.core.threeToVoxel = function (vector) {
         var result = new THREE.Vector3().copy(vector);
-        result.addScalar(-SANGJA.core.Block.SIZE * 0.5).divideScalar(SANGJA.core.Block.SIZE).round();
+        result.divideScalar(SANGJA.core.Block.SIZE);
         
         return result;
-    };
-    
-    SANGJA.core.relativeLinearTransform = function (target, center, matrix) {
-        target.traverseBlock(function (block) {
-            var vector;
-            
-            vector = block.position;
-            vector.sub(center);
-            vector.applyMatrix3(matrix);
-            vector.add(center);
-        });
-        
-        target.updateGuideBox();
     };
 }());

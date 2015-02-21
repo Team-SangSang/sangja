@@ -51,6 +51,9 @@
         while (selectedObjects.length > 0) {
             index = selectedObjects.length - 1;
             selectedObjects[index].hideGuideBox();
+            if (selectedObjects[index].hideGizmo) {
+                selectedObjects[index].hideGizmo();
+            }
             selectedObjects[index].setOpacity(1.0);
             
             selectedObjects.pop();
@@ -63,11 +66,17 @@
         
         if (blockIndex === -1) {
             object.showGuideBox(object instanceof SANGJA.core.Block ? SELECTION_BLOCK_OUTLINE : SELECTION_UNION_OUTLINE);
+            if (object.showGizmo) {
+                object.showGizmo();
+            }
             object.setOpacity(0.8);
             
             selectedObjects.push(object);
         } else {
             object.hideGuideBox();
+            if (object.hideGizmo) {
+                object.hideGizmo();
+            }
             object.setOpacity(1.0);
             
             selectedObjects.findAndRemove(object);
