@@ -148,7 +148,7 @@
             deselectAll();
             SANGJA.renderer.render();
         }
-    }, '/SANGJA/builder/selectObject.html', function () {
+    }, './SANGJA/builder/selectObject.html', function () {
         $('#' + UNION_BUTTON_ID).click(function () {
             SANGJA.builder.world.createUnion(selectedObjects);
             deselectAll();

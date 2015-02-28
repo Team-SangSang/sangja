@@ -103,7 +103,7 @@
             SANGJA.renderer.canvas.removeEventListener('clickWithoutMove', onCanvasClickWithoutMove);
             SANGJA.renderer.render();
         }
-    }, '/SANGJA/builder/transform.html', function () {
+    }, './SANGJA/builder/transform.html', function () {
         $('#transform-selected-form').submit(false);
         
         $('#transform-move-x-plus').click(function () {
