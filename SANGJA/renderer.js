@@ -130,17 +130,19 @@
             diffY = lastMouseDown.clientY - event.clientY;
             
             if (Math.abs(diffX) < CLICK_WITHOUT_MOVE_TOLERANCE && Math.abs(diffY) < CLICK_WITHOUT_MOVE_TOLERANCE && lastMouseDown.button === event.button) {
-                customEvent = new window.CustomEvent('clickWithoutMove', {
-                    detail: {
-                        clientX: event.clientX,
-                        clientY: event.clientY,
-                        pageX: event.pageX,
-                        pageY: event.pageY,
-                        ctrlKey: event.ctrlKey,
-                        shiftKey: event.shiftKey,
-                        altKey: event.altKey,
-                        button: event.button
-                    }
+                customEvent = document.createEvent('CustomEvent');
+                customEvent.initCustomEvent('clickWithoutMove', false, false, {
+                    screenX: event.screenX,
+                    screenY: event.screenY,
+                    clientX: event.clientX,
+                    clientY: event.clientY,
+                    pageX: event.pageX,
+                    pageY: event.pageY,
+                    ctrlKey: event.ctrlKey,
+                    shiftKey: event.shiftKey,
+                    altKey: event.altKey,
+                    metaKey: event.metaKey,
+                    button: event.button
                 });
                 canvas.dispatchEvent(customEvent);
             }
