@@ -20,9 +20,12 @@
     //=========
     
     function parseUnion(union) {
-        var i, next, position, result = {
+        var i, next, position, result;
+        
+        position = SANGJA.core.threeToVoxel(union.position);
+        result = {
             name: union.name || '',
-            position: [union.position.x, union.position.y, union.position.z],
+            position: [position.x, position.y, position.z],
             blockList: [],
             unionList: []
         };
@@ -30,7 +33,7 @@
         for (i = 0; i < union.blockList.length; i += 1) {
             next = union.blockList[i];
             
-            position = SANGJA.core.threeToVoxel(next.position).round();
+            position = SANGJA.core.threeToVoxel(next.position);
             result.blockList.push({
                 position: [position.x, position.y, position.z],
                 color: next.material.color.getHex()
@@ -52,7 +55,7 @@
         result = new SANGJA.core.Union();
         
         result.name = object.name;
-        result.position.set(object.position[0], object.position[1], object.position[2]);
+        result.position.copy(SANGJA.core.voxelToThree(new THREE.Vector3(object.position[0], object.position[1], object.position[2])));
         
         for (i = 0; i < object.blockList.length; i += 1) {
             next = object.blockList[i];
