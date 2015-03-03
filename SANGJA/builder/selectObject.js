@@ -12,7 +12,6 @@
         SELECT_ALL_ID = 'select-all',
         UNION_BUTTON_ID = 'select-create-union',
         UNION_NAME_INPUT = 'select-union-name',
-        EXPORT_UNION_ID = 'select-export-union',
         
         selectedObjects = [];
     
@@ -173,7 +172,56 @@
         //prevent form submission
         $('#select-union-form').submit(false);
         
-        $('#' + EXPORT_UNION_ID).click(function () {
+        $('#select-disjoint-union').click(function () {
+            var target, next, hash = {}, i;
+            
+            function getPositionHash(block, context) {
+                var position;
+                
+                context = context ? context.clone() : new THREE.Vector3();
+                
+                position = SANGJA.core.threeToVoxel(context.add(block.position));
+                return 'P' + position.x + '-' + position.y + '-' + position.z;
+            }
+            
+            target = selectedObjects[0];
+            
+            for (i = 0; i < target.parent.blockList.length; i += 1) {
+                hash[getPositionHash(target.parent.blockList[i])] = target.parent.blockList[i];
+            }
+            
+            for (i = 0; i < target.blockList.length; i += 1) {
+                if (hash[getPositionHash(target.blockList[i], target.position)]) {
+                    break;
+                }
+            }
+            
+            if (i === target.blockList.length || window.confirm('Overlapped block will be erased.')) {
+                deselectAll();
+                displayMenu();
+                
+                //덮어쓰기 진행
+                while (target.objectList.length > 0) {
+                    next = target.blockList[0];
+                    next.position.add(target.position);
+                    
+                    if (next instanceof SANGJA.core.Block) {
+                        if (hash[getPositionHash(next)]) {
+                            target.parent.remove(hash[getPositionHash(next)]);
+                        }
+                    }
+                    
+                    target.parent.add(next);
+                }
+                
+                target.parent.remove(target);
+            }
+            
+            SANGJA.builder.updateHierarchy();
+            SANGJA.renderer.render();
+        });
+        
+        $('#select-export-union').click(function () {
             var target, fileName;
             
             target = selectedObjects[0];
