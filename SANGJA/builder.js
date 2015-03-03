@@ -15,10 +15,12 @@
         currentMode: undefined,
         world: new SANGJA.core.Union(),
         helperPlane: undefined,
+        helperGrid: undefined,
         
         //Method
         addMode: undefined,
         updateHierarchy: undefined,
+        showGrid: undefined,
         getVoxelPosition: undefined,
         download: undefined
     };
@@ -33,15 +35,15 @@
         RUN_PLAYER_ID = 'run-player',
         
         helperPlane,
-        helperGuide;
+        helperGrid;
     
     //편집 중인 새로운 월드 추가
     SANGJA.builder.world.name = 'World';
     SANGJA.renderer.scene.add(SANGJA.builder.world);
         
     //보조선
-    helperGuide = new THREE.GridHelper(GRID_COUNT * SANGJA.core.Block.SIZE, SANGJA.core.Block.SIZE);
-    SANGJA.renderer.scene.add(helperGuide);
+    helperGrid = new THREE.GridHelper(GRID_COUNT * SANGJA.core.Block.SIZE, SANGJA.core.Block.SIZE);
+    SANGJA.renderer.scene.add(helperGrid);
     
     //가이드 평면 추가
     helperPlane = new THREE.PlaneBufferGeometry(GRID_COUNT * SANGJA.core.Block.SIZE * 2, GRID_COUNT * SANGJA.core.Block.SIZE * 2);
@@ -51,6 +53,7 @@
     SANGJA.renderer.scene.add(helperPlane);
     
     SANGJA.builder.helperPlane = helperPlane;
+    SANGJA.builder.helperGrid = helperGrid;
     
     //색상 선택기 이벤트
     $('#color-picker').on('change.spectrum', function (event, tinycolor) {
@@ -131,7 +134,11 @@
     
     SANGJA.builder.updateHierarchy();
     
-    
+    //가이드 격자의 visibility 설정
+    SANGJA.builder.showGrid = function (value) {
+        SANGJA.builder.helperGrid.visible = value;
+        SANGJA.renderer.render();
+    };
     
     //교차점으로부터 다음 블록 위치를 결정하는 함수
     SANGJA.builder.getVoxelPosition = function (intersect) {
