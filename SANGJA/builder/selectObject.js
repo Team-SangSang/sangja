@@ -25,6 +25,13 @@
             
             unionNameInput = $('#' + UNION_NAME_INPUT),
             addScript = $('#' + SCRIPT_DIV_ID);
+        
+        function scriptModal(target, index) {
+            return function () {
+                $('#script-modal-title').text('Script' + (index + 1));
+                $('#script-modal').modal();
+            };
+        }
             
         function eraseScript(target, index) {
             return function () {
@@ -50,7 +57,11 @@
             for (i = 0; i < target.scriptList.length; i += 1) {
                 addScript.append(
                     $('<p>').append(
-                        $('<div class="col-xs-10"><button class="btn btn-default btn-block">Script' + (i + 1) + "</button></div>")
+                        $('<div class="col-xs-10"></div>').append(
+                            $('<button class="btn btn-default btn-block">Script' + (i + 1) + '</button>').click(
+                                scriptModal(target, i)
+                            )
+                        )
                     ).append(
                         $('<button class="btn btn-link"><span class="glyphicon glyphicon-trash"></button>').click(
                             eraseScript(target, i)

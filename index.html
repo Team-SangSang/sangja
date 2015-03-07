@@ -28,6 +28,48 @@
             <input type="text" id="color-picker" class="btn btn-default navbar-btn">
         </div>
     </nav>
+    
+    <div class="modal fade" id="script-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="script-modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    TODO Script
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="import-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Import Union</h4>
+                </div>
+                <div class="modal-body">
+                    TODO Import Union
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="export-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Export Union</h4>
+                </div>
+                <div class="modal-body">
+                    TODO Export Union
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="main">
         <div class="tool-panel">
@@ -41,6 +83,7 @@
                     <div id="tool-hierarchy"></div>
                     <button id="tool-export-scene" class="btn btn-default btn-block">Export Scene</button>
                     <span class="btn btn-info btn-file btn-block">Import<input id="tool-import" type="file" accept=".vox,.world,.union"></span>
+                    <button id="tool-import-web" class="btn btn-info btn-file btn-block" data-toggle="modal" data-target="#import-modal">Import Web</button>
                 </div>
             </div>
             <button id="run-player" class="btn btn-success btn-block"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Run!</button>
