@@ -13,14 +13,25 @@
         UNION_BUTTON_ID = 'select-create-union',
         UNION_NAME_INPUT = 'select-union-name',
         
+        SCRIPT_DIV_ID = 'select-script',
+        
         selectedObjects = [];
     
     function displayMenu() {
-        var selectNone = $('#' + SELECT_NONE_ID),
+        var i, target,
+            selectNone = $('#' + SELECT_NONE_ID),
             selected = $('#' + SELECTED_ID),
             selectUnion = $('#' + SELECT_UNION_ID),
             
-            unionNameInput = $('#' + UNION_NAME_INPUT);
+            unionNameInput = $('#' + UNION_NAME_INPUT),
+            addScript = $('#' + SCRIPT_DIV_ID);
+            
+        function eraseScript(target, index) {
+            return function () {
+                target.scriptList.findAndRemove(target.scriptList[index]);
+                displayMenu();
+            };
+        }
         
         $('#toolmenu-select > div').css('display', 'none');
         
@@ -29,8 +40,24 @@
             selectNone.css('display', '');
         } else if (selectedObjects.length === 1 && selectedObjects[0] instanceof SANGJA.core.Union) {
             //유니온 하나 선택
+            target = selectedObjects[0];
+            
             selectUnion.css('display', '');
-            unionNameInput.val(selectedObjects[0].name);
+            unionNameInput.val(target.name);
+            
+            addScript.html('');
+            
+            for (i = 0; i < target.scriptList.length; i += 1) {
+                addScript.append(
+                    $('<p>').append(
+                        $('<div class="col-xs-10"><button class="btn btn-default btn-block">Script' + (i + 1) + "</button></div>")
+                    ).append(
+                        $('<button class="btn btn-link"><span class="glyphicon glyphicon-trash"></button>').click(
+                            eraseScript(target, i)
+                        )
+                    )
+                );
+            }
         } else {
             //다중 오브젝트 선택
             selected.css('display', '');
@@ -233,6 +260,16 @@
             }
             
             SANGJA.parser.download(SANGJA.parser.unionToJson(target), fileName + '.union', 'text/plain');
+        });
+        
+        $('#select-add-script').click(function () {
+            var target;
+            
+            target = selectedObjects[0];
+            
+            target.scriptList.push('');
+            
+            displayMenu();
         });
     });
 }());

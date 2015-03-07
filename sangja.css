@@ -28,6 +28,10 @@
     margin-bottom: 10px;
 }
 
+#select-script {
+    padding: 10px;
+}
+
 /* tree css from: http://cssdeck.com/labs/pure-css-tree-menu-framework */
 
 .tree,

@@ -27,7 +27,8 @@
             name: union.name || '',
             position: [position.x, position.y, position.z],
             blockList: [],
-            unionList: []
+            unionList: [],
+            scriptList: []
         };
         
         for (i = 0; i < union.blockList.length; i += 1) {
@@ -44,6 +45,10 @@
             next = union.unionList[i];
             
             result.unionList.push(parseUnion(next));
+        }
+        
+        for (i = 0; i < union.scriptList.length; i += 1) {
+            result.scriptList.push(union.scriptList[i]);
         }
         
         return result;
@@ -67,6 +72,10 @@
             next = object.unionList[i];
             
             result.add(parseObject(next));
+        }
+        
+        for (i = 0; i < object.scriptList.length; i += 1) {
+            result.scriptList.push(object.scriptList[i]);
         }
         
         return result;

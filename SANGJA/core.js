@@ -121,6 +121,8 @@ var SANGJA = {};
             this.objectList = []; //blocks + unions
             this.blockList = []; //only blocks
             this.unionList = []; //only unions
+            
+            this.scriptList = [];
         }
         
         Union.prototype = Object.create(THREE.Object3D.prototype);
