@@ -3,7 +3,9 @@
 (function () {
     "use strict";
     
-    var SELECTION_BLOCK_OUTLINE = 0x00FF00,
+    var currentTarget, currentIndex,
+        
+        SELECTION_BLOCK_OUTLINE = 0x00FF00,
         SELECTION_UNION_OUTLINE = 0x0000FF,
         SELECT_NONE_ID = 'select-none',
         SELECTED_ID = 'select-selected',
@@ -30,6 +32,10 @@
             return function () {
                 $('#script-modal-title').text('Script' + (index + 1));
                 $('#script-modal').modal();
+                $('#script-editor').val(target.scriptList[index]);
+                
+                currentTarget = target;
+                currentIndex = index;
             };
         }
             
@@ -281,6 +287,29 @@
             target.scriptList.push('');
             
             displayMenu();
+        });
+        
+        $('#script-modal').on('hide.bs.modal', function () {
+            currentTarget.scriptList[currentIndex] = $('#script-editor').val();
+        });
+        
+        $(document).on('keydown', '#script-editor', function (e) {
+            var start, end, keyCode = e.keyCode || e.which;
+
+            if (keyCode === 9) {
+                e.preventDefault();
+                start = $(this).get(0).selectionStart;
+                end = $(this).get(0).selectionEnd;
+
+                // set textarea value to: text before caret + tab + text after caret
+                $(this).val($(this).val().substring(0, start)
+                    + "    "
+                    + $(this).val().substring(end));
+
+                // put caret at right position again
+                $(this).get(0).selectionStart =
+                    $(this).get(0).selectionEnd = start + 4;
+            }
         });
     });
 }());

@@ -32,6 +32,11 @@
     padding: 10px;
 }
 
+#script-editor {
+    width: 100%;
+    height: 80%;
+}
+
 /* tree css from: http://cssdeck.com/labs/pure-css-tree-menu-framework */
 
 .tree,

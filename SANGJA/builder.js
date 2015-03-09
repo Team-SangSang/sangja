@@ -98,7 +98,7 @@
         document.addEventListener('keydown', function (event) {
             var activeObj = document.activeElement;
             
-            if (event.keyCode === key && (activeObj === null || activeObj.getAttribute('type') !== 'text')) {
+            if (event.keyCode === key && (activeObj === null || (activeObj.getAttribute('type') !== 'text' && activeObj.tagName !== 'TEXTAREA'))) {
                 toolButton.click();
             }
         });
