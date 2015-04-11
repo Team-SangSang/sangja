@@ -15,7 +15,8 @@
         
         //Method
         getMouseRaycaster: undefined,
-        render: undefined
+        render: undefined,
+        capture: undefined
     };
     
     //상수 선언
@@ -66,7 +67,7 @@
         canvas.appendChild(renderer.domElement);
         
         camera = new THREE.PerspectiveCamera(40, canvas.offsetWidth / canvas.offsetHeight, 1, 20000);
-        camera.position.set(100, 100, 100);
+        camera.position.set(200, 200, 200);
         camera.lookAt(new THREE.Vector3());
         scene.add(camera);
         
@@ -172,6 +173,16 @@
         raycaster = new THREE.Raycaster(camera.position, mouse3D.sub(camera.position).normalize());
         
         return raycaster;
+    };
+
+    SANGJA.renderer.capture = function () {
+        SANGJA.builder.showGrid(false);
+        
+        var $data = $(canvas).find('canvas')[0].toDataURL();
+
+        SANGJA.builder.showGrid(true);
+
+        return $data;
     };
     
     SANGJA.renderer.render = render;

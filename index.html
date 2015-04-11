@@ -51,7 +51,19 @@
                     <h4 class="modal-title">Import Union</h4>
                 </div>
                 <div class="modal-body">
-                    TODO Import Union
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Union Name</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="title" id="importUnionName" />
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-2">
+                            <button class="btn btn-primary" type="button" id="importUnionBtn">Search</button>
+                        </div>
+                    </form>
+                    <ul id="unionListForImport">
+                    </ul>
                 </div>
             </div>
         </div>
@@ -65,7 +77,17 @@
                     <h4 class="modal-title">Export Union</h4>
                 </div>
                 <div class="modal-body">
-                    TODO Export Union
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Union Name</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="title" id="exportUnionName" />
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-2">
+                            <button class="btn btn-primary" type="button" id="exportUnionBtn" data-dismiss="modal">Export to Web</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -92,6 +114,8 @@
     </div>
 
     <script>
+        window.article = {};
+        
         $("#color-picker").spectrum({
             showPaletteOnly: true,
             preferredFormat: "hex",

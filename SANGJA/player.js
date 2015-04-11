@@ -41,9 +41,25 @@
         }
     }
     
-    SANGJA.player.world = SANGJA.parser.jsonToUnion(sessionStorage.world);
-    playerInit(SANGJA.player.world);
+    if (SANGJA.core.isLocal()) {
+        SANGJA.player.world = SANGJA.parser.jsonToUnion(sessionStorage.world);
+        playerInit(SANGJA.player.world);
 
-    SANGJA.renderer.scene.add(SANGJA.player.world);
-    SANGJA.renderer.render();
+        SANGJA.renderer.scene.add(SANGJA.player.world);
+        SANGJA.renderer.render();
+    } else {
+        $.ajax({
+            method: 'GET',
+            cache: false,
+            url: '/app/import/' + location.search.split('?')[1],
+            dataType: 'json',
+            success: function (response) {
+                SANGJA.player.world = SANGJA.parser.jsonToUnion(response.content);
+                playerInit(SANGJA.player.world);
+
+                SANGJA.renderer.scene.add(SANGJA.player.world);
+                SANGJA.renderer.render();
+            }
+        });
+    }
 }());

@@ -1,4 +1,4 @@
-/*global $, THREE, SANGJA*/
+/*global $, console, THREE, SANGJA*/
 
 (function () {
     "use strict";
@@ -310,6 +310,77 @@
                 $(this).get(0).selectionStart =
                     $(this).get(0).selectionEnd = start + 4;
             }
+        });
+        
+        $('#export-modal').on('show.bs.modal', function () {
+            var target, fileName;
+            
+            target = selectedObjects[0];
+
+            $('#exportUnionName').val(window.article.title + '_' + target.name);
+        });
+
+        $('#exportUnionBtn').click(function () {
+            var target, sendData;
+            
+            target = selectedObjects[0];
+
+            sendData = {
+                id: window.article.id,
+                content: SANGJA.parser.unionToJson(target),
+                title: $('#exportUnionName').val()
+            };
+
+            $.ajax({
+                type: 'post',
+                url: '/app/export',
+                data: sendData,
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+        });
+
+        $('#importUnionBtn').on('click', function () {
+            var $sendData = {
+                title: $('#importUnionName').val()
+            };
+
+            $.ajax({
+                type: 'post',
+                url: '/app/search',
+                data: $sendData,
+                success: function (response) {
+                    var i, data;
+                    
+                    $('#unionListForImport').empty();
+
+                    console.log(response);
+                    
+                    function click() {
+                        return function () {
+                            console.log($(this).data('content'));
+                            var asset = SANGJA.parser.jsonToUnion($(this).data('content'));
+                            SANGJA.builder.world.add(asset);
+                            SANGJA.renderer.render();
+                            SANGJA.builder.updateHierarchy();
+
+                            $('#import-modal').modal('hide');
+                        };
+                    }
+
+                    for (i in response) {
+                        if (response.hasOwnProperty(i) && response[i].hasOwnProperty('title')) {
+                            data = $('<li></li>');
+                            data.data('content', response[i].content);
+                            data.text(response[i].title);
+                            $('#unionListForImport').append(data);
+
+                            data.on('click', click());
+                        }
+                    }
+                }
+            });
         });
     });
 }());

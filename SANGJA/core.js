@@ -17,7 +17,8 @@ var SANGJA = {};
         
         //Method
         voxelToThree: undefined,
-        threeToVoxel: undefined
+        threeToVoxel: undefined,
+        isLocal: undefined
     };
     
     //기존 클래스에 메서드 추가
@@ -331,5 +332,9 @@ var SANGJA = {};
         result.divideScalar(SANGJA.core.Block.SIZE);
         
         return result;
+    };
+    
+    SANGJA.core.isLocal = function () {
+        return window === window.parent;
     };
 }());
