@@ -1,3 +1,6 @@
 [submodule "vox2union"]
 	path = vox2union
 	url = git://github.com/Team-SangSang/vox2union.git
+[submodule "omni"]
+	path = omni
+	url = git://github.com/Team-SangSang/deprecated-omni.js

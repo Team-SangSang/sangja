@@ -38,6 +38,17 @@
                 currentIndex = index;
             };
         }
+        
+        function omniModal(target, index) {
+            return function () {
+                $('#omni-modal-title').text('Script' + (index + 1));
+                $('#omni-modal').modal();
+                $('#omni-editor')[0].contentWindow.workspace.import(target.omniList[index]);
+                
+                currentTarget = target;
+                currentIndex = index;
+            };
+        }
             
         function eraseScript(target, index) {
             return function () {
@@ -63,10 +74,14 @@
             for (i = 0; i < target.scriptList.length; i += 1) {
                 addScript.append(
                     $('<p>').append(
-                        $('<div class="col-xs-10"></div>').append(
+                        $('<div class="col-xs-8"></div>').append(
                             $('<button class="btn btn-default btn-block">Script' + (i + 1) + '</button>').click(
-                                scriptModal(target, i)
+                                omniModal(target, i)
                             )
+                        )
+                    ).append(
+                        $('<button class="btn btn-link"><span class="glyphicon glyphicon-pencil"></button>').click(
+                            scriptModal(target, i)
                         )
                     ).append(
                         $('<button class="btn btn-link"><span class="glyphicon glyphicon-trash"></button>').click(
@@ -291,6 +306,11 @@
         
         $('#script-modal').on('hide.bs.modal', function () {
             currentTarget.scriptList[currentIndex] = $('#script-editor').val();
+        });
+        
+        $('#omni-modal').on('hide.bs.modal', function () {
+            currentTarget.scriptList[currentIndex] = $('#omni-editor')[0].contentWindow.workspace.getScript();
+            currentTarget.omniList[currentIndex] = $('#omni-editor')[0].contentWindow.workspace.export();
         });
         
         $(document).on('keydown', '#script-editor', function (e) {

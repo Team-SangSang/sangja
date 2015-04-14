@@ -124,6 +124,7 @@ var SANGJA = {};
             this.unionList = []; //only unions
             
             this.scriptList = [];
+            this.omniList = [];
         }
         
         Union.prototype = Object.create(THREE.Object3D.prototype);

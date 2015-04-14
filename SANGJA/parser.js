@@ -28,7 +28,8 @@
             position: [position.x, position.y, position.z],
             blockList: [],
             unionList: [],
-            scriptList: []
+            scriptList: [],
+            omniList: []
         };
         
         for (i = 0; i < union.blockList.length; i += 1) {
@@ -49,6 +50,13 @@
         
         for (i = 0; i < union.scriptList.length; i += 1) {
             result.scriptList.push(union.scriptList[i]);
+            result.omniList.push('');
+        }
+        
+        if (result.omniList) {
+            for (i = 0; i < union.omniList.length; i += 1) {
+                result.omniList[i] = union.omniList[i];
+            }
         }
         
         return result;
@@ -76,6 +84,13 @@
         
         for (i = 0; i < object.scriptList.length; i += 1) {
             result.scriptList.push(object.scriptList[i]);
+            result.omniList.push('');
+        }
+        
+        if (object.omniList) {
+            for (i = 0; i < object.omniList.length; i += 1) {
+                result.omniList[i] = object.omniList[i];
+            }
         }
         
         return result;
