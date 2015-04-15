@@ -10,6 +10,9 @@
     "use strict";
     
     SANGJA.player = {
+        //Constant
+        DEFAULT_FPS: 30,
+        
         //Property
         world: undefined
     };

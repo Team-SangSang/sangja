@@ -12,6 +12,7 @@
         getObjectByName: undefined,
         setPosition: undefined,
         moveDelta: undefined,
+        checkCollision: undefined,
 
         setVariable: undefined,
         getVariable: undefined
@@ -58,6 +59,19 @@
         }
         
         SANGJA.renderer.render();
+    };
+    
+    API.union.checkCollision = function (unionList, targetList) {
+        var i, j;
+        for (i = 0; i < unionList.length; i += 1) {
+            for (j = 0; j < targetList.length; j += 1) {
+                if (unionList[i].getBoundingBox().isIntersectionBox(targetList[j].getBoundingBox())) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     };
     
     
